@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.example.demo.service;
 import com.example.demo.entity.EnterItem;
 import com.example.demo.entity.UserItem;
 import com.example.demo.repository.EnterRepository;

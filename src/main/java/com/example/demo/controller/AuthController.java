@@ -9,6 +9,7 @@ import com.example.demo.payload.response.JWTTokenSuccessResponse;
 import com.example.demo.payload.response.MessageResponse;
 import com.example.demo.security.JWTTokenProvider;
 import com.example.demo.security.SecurityConstants;
+import com.example.demo.service.EnterService;
 import com.example.demo.service.UserService;
 import com.example.demo.validations.ResponseErrorValidation;
 import javax.validation.Valid;
