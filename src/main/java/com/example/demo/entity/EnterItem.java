@@ -8,11 +8,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @Table(name = "enter")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class EnterItem {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -22,9 +28,6 @@ public class EnterItem {
     private Long userId;
     @Column(updatable = false)
     private LocalDateTime dateEntered;
-
-    public EnterItem() {
-    }
 
     @PrePersist
     protected void onCreate()

@@ -25,14 +25,14 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        UserItem userModel = userRepository.findUserModelByEmail(username)
+        UserItem userModel = userRepository.findUserItemByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found with username: " + username));
 
         return build(userModel);
     }
 
     public UserItem loadUserById(Long userid) {
-        return userRepository.findUserModelByUserId(userid).orElse(null);
+        return userRepository.findUserItemByUserId(userid).orElse(null);
     }
 
 

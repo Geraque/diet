@@ -88,7 +88,7 @@ public class UserService {
 
     private UserItem getUserByPrincipal(Principal principal) {
         String username = principal.getName();
-        return userRepository.findUserModelByUsername(username)
+        return userRepository.findUserItemByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found with username " + username));
 
     }
@@ -98,7 +98,7 @@ public class UserService {
     }
 
     public UserItem getUserByUsername(String username) {
-        return userRepository.findUserModelByUsername(username)
+        return userRepository.findUserItemByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found with username " + username));
     }
 

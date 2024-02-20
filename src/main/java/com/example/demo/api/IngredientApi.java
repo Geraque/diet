@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RequestMapping("api/ingredients")
+@RequestMapping("api/ingredient")
 @CrossOrigin
 public interface IngredientApi {
 
