@@ -1,12 +1,15 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.DayItem;
+import com.example.demo.entity.IngredientDayItem;
+import com.example.demo.entity.IngredientItem;
 import com.example.demo.entity.PlanItem;
 import com.example.demo.entity.UserItem;
 import com.example.demo.entity.enums.EatingTime;
 import com.example.demo.model.Plan;
 import com.example.demo.repository.DayRepository;
 import com.example.demo.repository.IngredientDayRepository;
+import com.example.demo.repository.IngredientRepository;
 import com.example.demo.repository.PlanRepository;
 import com.example.demo.repository.UserRepository;
 import java.security.Principal;
@@ -27,6 +30,7 @@ public class PlanService {
   private final UserRepository userRepository;
   private final DayRepository dayRepository;
   private final IngredientDayRepository ingredientDayRepository;
+  private final IngredientRepository ingredientRepository;
 
   public List<PlanItem> getPlansForUser(Long userId) {
     UserItem user = getUserForUserId(userId).get();
@@ -73,6 +77,28 @@ public class PlanService {
 
     // Возврат созданного плана
     return planItem;
+  }
+
+  public PlanItem addIngredient(Principal principal, Long planId, DayOfWeek dayOfWeek,
+      EatingTime eatingTime,
+      String ingredient, Integer count) {
+    PlanItem plan = planRepository.findByPlanId(planId).get();
+    System.out.println("ZXc");
+    System.out.println(ingredient);
+    System.out.println(count);
+    IngredientItem ingredientItem = ingredientRepository.findByName(ingredient).get();
+
+    System.out.println(ingredientItem.getName());
+    System.out.println("zxc");
+
+    IngredientDayItem ingredientDayItem = IngredientDayItem.builder()
+        .day(dayRepository.findByPlanAndDayAndEatingTime(plan, dayOfWeek, eatingTime)
+            .get())
+        .ingredient(ingredientRepository.findByName(ingredient).get())
+        .count(count)
+        .build();
+    ingredientDayRepository.save(ingredientDayItem);
+    return planRepository.findByPlanId(Long.valueOf(planId)).get();
   }
 
   private UserItem getUserByPrincipal(Principal principal) {

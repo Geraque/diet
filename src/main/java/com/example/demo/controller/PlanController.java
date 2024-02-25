@@ -2,22 +2,21 @@ package com.example.demo.controller;
 
 import com.example.demo.api.PlanApi;
 import com.example.demo.entity.PlanItem;
+import com.example.demo.entity.enums.EatingTime;
 import com.example.demo.facade.PlanFacade;
 import com.example.demo.model.Plan;
 import com.example.demo.service.PlanService;
 import com.example.demo.validations.ResponseErrorValidation;
 import java.security.Principal;
+import java.time.DayOfWeek;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -54,9 +53,25 @@ public class PlanController implements PlanApi {
       BindingResult bindingResult,
       Principal principal) {
     ResponseEntity<Object> errors = responseErrorValidation.mapValidationService(bindingResult);
-    if (!ObjectUtils.isEmpty(errors)) return errors;
+    if (!ObjectUtils.isEmpty(errors)) {
+      return errors;
+    }
 
     PlanItem planItem = planService.createPlan(plan, principal);
+    Plan createdPlan = planFacade.apply(planItem);
+
+    return new ResponseEntity<>(createdPlan, HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<Object> addIngredient(Principal principal,
+      Long planId,
+      DayOfWeek dayOfWeek,
+      EatingTime eatingTime,
+      String ingredient,
+      String count) {
+    PlanItem planItem = planService.addIngredient(principal, planId, dayOfWeek, eatingTime,
+        ingredient, Integer.valueOf(count));
     Plan createdPlan = planFacade.apply(planItem);
 
     return new ResponseEntity<>(createdPlan, HttpStatus.OK);

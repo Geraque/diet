@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -34,4 +35,14 @@ public class PlanItem {
   private UserItem user;
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "plan", orphanRemoval = true)
   private List<DayItem> days = new ArrayList<>();
+
+  @Override
+  public String toString() {
+    return "PlanItem{" +
+        "planId=" + planId +
+        ", name='" + name + '\'' +
+        ", user=" + user +
+        ", days=" + days +
+        '}';
+  }
 }
