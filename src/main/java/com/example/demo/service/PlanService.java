@@ -118,6 +118,21 @@ public class PlanService {
     return planRepository.findByPlanId(Long.valueOf(planId)).get();
   }
 
+  public PlanItem update(Principal principal, Long planId, DayOfWeek dayOfWeek,
+      EatingTime eatingTime,
+      String ingredientOld, String ingredientNew, Integer count) {
+    PlanItem plan = planRepository.findByPlanId(planId).get();
+    IngredientItem ingredientItem = ingredientRepository.findByName(ingredientOld).get();
+    DayItem day = dayRepository.findByPlanAndDayAndEatingTime(plan, dayOfWeek, eatingTime).get();
+    IngredientDayItem ingredientDayItem = ingredientDayRepository.findByDayAndIngredient(day,
+        ingredientItem).get();
+    ingredientDayItem.setIngredient(ingredientRepository.findByName(ingredientNew).get());
+    ingredientDayItem.setCount(count);
+    ingredientDayItem.setCheckIngredient(false);
+    ingredientDayRepository.save(ingredientDayItem);
+    return planRepository.findByPlanId(Long.valueOf(planId)).get();
+  }
+
   private UserItem getUserByPrincipal(Principal principal) {
     String username = principal.getName();
     return userRepository.findUserItemByUsername(username)

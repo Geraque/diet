@@ -53,4 +53,15 @@ public interface PlanApi {
       @RequestParam(value = "ingredient") String ingredient,
       @RequestParam(value = "count") String count
   );
+
+  @PostMapping("/{planId}/{dayOfWeek}/{eatingTime}/update")
+  public ResponseEntity<Object> update(
+      Principal principal,
+      @PathVariable("planId") Long planId,
+      @PathVariable("dayOfWeek") DayOfWeek dayOfWeek,
+      @PathVariable("eatingTime") EatingTime eatingTime,
+      @RequestParam(value = "ingredientOld") String ingredientOld,
+      @RequestParam(value = "ingredientNew") String ingredientNew,
+      @RequestParam(value = "count") String count
+  );
 }

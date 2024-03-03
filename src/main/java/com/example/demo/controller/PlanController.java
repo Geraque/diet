@@ -90,4 +90,19 @@ public class PlanController implements PlanApi {
 
     return new ResponseEntity<>(createdPlan, HttpStatus.OK);
   }
+
+  @Override
+  public ResponseEntity<Object> update(Principal principal,
+      Long planId,
+      DayOfWeek dayOfWeek,
+      EatingTime eatingTime,
+      String ingredientOld,
+      String ingredientNew,
+      String count) {
+    PlanItem planItem = planService.update(principal, planId, dayOfWeek, eatingTime,
+        ingredientOld, ingredientNew, Integer.valueOf(count));
+    Plan createdPlan = planFacade.apply(planItem);
+
+    return new ResponseEntity<>(createdPlan, HttpStatus.OK);
+  }
 }
