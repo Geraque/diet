@@ -76,4 +76,18 @@ public class PlanController implements PlanApi {
 
     return new ResponseEntity<>(createdPlan, HttpStatus.OK);
   }
+
+  @Override
+  public ResponseEntity<Object> check(Principal principal,
+      Long planId,
+      DayOfWeek dayOfWeek,
+      EatingTime eatingTime,
+      String ingredient,
+      String count) {
+    PlanItem planItem = planService.check(principal, planId, dayOfWeek, eatingTime,
+        ingredient, Integer.valueOf(count));
+    Plan createdPlan = planFacade.apply(planItem);
+
+    return new ResponseEntity<>(createdPlan, HttpStatus.OK);
+  }
 }

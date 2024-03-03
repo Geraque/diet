@@ -10,4 +10,5 @@ public class IngredientDay {
   private Long id;
   private Ingredient ingredient;
   private Integer count;
+  private Boolean checkIngredient;
 }

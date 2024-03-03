@@ -38,19 +38,6 @@ public class PlanFacade {
     return user;
   }
 
-  //  public PlanWithDays apply(PlanItem planItem, List<DayItem> days) {
-//    List<Day> appliedDays = days.stream()
-//        .map(this::apply)
-//        .collect(Collectors.toList());
-//
-//    return PlanWithDays.builder()
-//        .userId(planItem.getUser())
-//        .planId(planItem.getPlanId())
-//        .name(planItem.getName())
-//        .days(appliedDays)
-//        .build();
-//  }
-//
   public Day apply(DayItem dayItem) {
     List<IngredientDay> appliedIngredients = dayItem.getIngredients().stream()
         .map(this::apply)
@@ -69,6 +56,7 @@ public class PlanFacade {
         .count(ingredientDayItem.getCount())
         .id(ingredientDayItem.getId())
         .ingredient(apply(ingredientDayItem.getIngredient()))
+        .checkIngredient(ingredientDayItem.getCheckIngredient())
         .build();
   }
 

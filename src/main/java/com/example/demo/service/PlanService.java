@@ -8,12 +8,14 @@ import com.example.demo.entity.UserItem;
 import com.example.demo.entity.enums.EatingTime;
 import com.example.demo.model.Plan;
 import com.example.demo.repository.DayRepository;
+import com.example.demo.repository.FollowerRepository;
 import com.example.demo.repository.IngredientDayRepository;
 import com.example.demo.repository.IngredientRepository;
 import com.example.demo.repository.PlanRepository;
 import com.example.demo.repository.UserRepository;
 import java.security.Principal;
 import java.time.DayOfWeek;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -26,11 +28,13 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class PlanService {
 
+  private final UserService userService;
   private final PlanRepository planRepository;
   private final UserRepository userRepository;
   private final DayRepository dayRepository;
   private final IngredientDayRepository ingredientDayRepository;
   private final IngredientRepository ingredientRepository;
+  private final FollowerRepository followerRepository;
 
   public List<PlanItem> getPlansForUser(Long userId) {
     UserItem user = getUserForUserId(userId).get();
@@ -39,7 +43,14 @@ public class PlanService {
 
   public List<PlanItem> getPlansForUser(Principal principal) {
     UserItem user = getUserByPrincipal(principal);
-    return planRepository.findAllByUserOrderByName(user);
+    if (userService.isDiet(principal) || userService.isAdmin(user.getUserId())) {
+      return planRepository.findAllByUserOrderByName(user);
+    } else {
+      List<PlanItem> list = new ArrayList<>();
+      PlanItem plan = followerRepository.findByUserId(user.getUserId()).getPlan();
+      list.add(plan);
+      return list;
+    }
   }
 
   public Optional<UserItem> getUserForUserId(Long userId) {
@@ -83,13 +94,6 @@ public class PlanService {
       EatingTime eatingTime,
       String ingredient, Integer count) {
     PlanItem plan = planRepository.findByPlanId(planId).get();
-    System.out.println("ZXc");
-    System.out.println(ingredient);
-    System.out.println(count);
-    IngredientItem ingredientItem = ingredientRepository.findByName(ingredient).get();
-
-    System.out.println(ingredientItem.getName());
-    System.out.println("zxc");
 
     IngredientDayItem ingredientDayItem = IngredientDayItem.builder()
         .day(dayRepository.findByPlanAndDayAndEatingTime(plan, dayOfWeek, eatingTime)
@@ -97,6 +101,19 @@ public class PlanService {
         .ingredient(ingredientRepository.findByName(ingredient).get())
         .count(count)
         .build();
+    ingredientDayRepository.save(ingredientDayItem);
+    return planRepository.findByPlanId(Long.valueOf(planId)).get();
+  }
+
+  public PlanItem check(Principal principal, Long planId, DayOfWeek dayOfWeek,
+      EatingTime eatingTime,
+      String ingredient, Integer count) {
+    PlanItem plan = planRepository.findByPlanId(planId).get();
+    IngredientItem ingredientItem = ingredientRepository.findByName(ingredient).get();
+    DayItem day = dayRepository.findByPlanAndDayAndEatingTime(plan, dayOfWeek, eatingTime).get();
+    IngredientDayItem ingredientDayItem = ingredientDayRepository.findByDayAndIngredient(day,
+        ingredientItem).get();
+    ingredientDayItem.setCheckIngredient(true);
     ingredientDayRepository.save(ingredientDayItem);
     return planRepository.findByPlanId(Long.valueOf(planId)).get();
   }
