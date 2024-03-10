@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.DayItem;
+import com.example.demo.entity.HistoryItem;
 import com.example.demo.entity.IngredientDayItem;
 import com.example.demo.entity.IngredientItem;
 import com.example.demo.entity.PlanItem;
@@ -9,6 +10,7 @@ import com.example.demo.entity.enums.EatingTime;
 import com.example.demo.model.Plan;
 import com.example.demo.repository.DayRepository;
 import com.example.demo.repository.FollowerRepository;
+import com.example.demo.repository.HistoryRepository;
 import com.example.demo.repository.IngredientDayRepository;
 import com.example.demo.repository.IngredientRepository;
 import com.example.demo.repository.PlanRepository;
@@ -35,6 +37,7 @@ public class PlanService {
   private final IngredientDayRepository ingredientDayRepository;
   private final IngredientRepository ingredientRepository;
   private final FollowerRepository followerRepository;
+  private final HistoryRepository historyRepository;
 
   public List<PlanItem> getPlansForUser(Long userId) {
     UserItem user = getUserForUserId(userId).get();
@@ -124,12 +127,28 @@ public class PlanService {
     PlanItem plan = planRepository.findByPlanId(planId).get();
     IngredientItem ingredientItem = ingredientRepository.findByName(ingredientOld).get();
     DayItem day = dayRepository.findByPlanAndDayAndEatingTime(plan, dayOfWeek, eatingTime).get();
+    IngredientItem ingredientItemNew = ingredientRepository.findByName(ingredientNew).get();
+
     IngredientDayItem ingredientDayItem = ingredientDayRepository.findByDayAndIngredient(day,
         ingredientItem).get();
-    ingredientDayItem.setIngredient(ingredientRepository.findByName(ingredientNew).get());
+
+    Integer oldCount = ingredientDayItem.getCount();
+    IngredientItem ingredientOldItem = ingredientDayItem.getIngredient();
+
+    ingredientDayItem.setIngredient(ingredientItemNew);
     ingredientDayItem.setCount(count);
     ingredientDayItem.setCheckIngredient(false);
     ingredientDayRepository.save(ingredientDayItem);
+
+    HistoryItem historyItem = HistoryItem.builder()
+        .day(dayRepository.findByPlanAndDayAndEatingTime(plan, dayOfWeek, eatingTime)
+            .get())
+        .ingredientNew(ingredientItemNew)
+        .countNew(count)
+        .ingredientOld(ingredientOldItem)
+        .countOld(oldCount)
+        .build();
+    historyRepository.save(historyItem);
     return planRepository.findByPlanId(Long.valueOf(planId)).get();
   }
 

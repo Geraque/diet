@@ -1,11 +1,13 @@
 package com.example.demo.facade;
 
 import com.example.demo.entity.DayItem;
+import com.example.demo.entity.HistoryItem;
 import com.example.demo.entity.IngredientDayItem;
 import com.example.demo.entity.IngredientItem;
 import com.example.demo.entity.PlanItem;
 import com.example.demo.entity.UserItem;
 import com.example.demo.model.Day;
+import com.example.demo.model.History;
 import com.example.demo.model.Ingredient;
 import com.example.demo.model.IngredientDay;
 import com.example.demo.model.Plan;
@@ -57,6 +59,16 @@ public class PlanFacade {
         .id(ingredientDayItem.getId())
         .ingredient(apply(ingredientDayItem.getIngredient()))
         .checkIngredient(ingredientDayItem.getCheckIngredient())
+        .build();
+  }
+
+  public History apply(HistoryItem historyItem) {
+    return History.builder()
+        .countOld(historyItem.getCountOld())
+        .countNew(historyItem.getCountNew())
+        .id(historyItem.getId())
+        .ingredientOld(apply(historyItem.getIngredientOld()))
+        .ingredientNew(apply(historyItem.getIngredientNew()))
         .build();
   }
 
