@@ -10,7 +10,6 @@ import com.example.demo.repository.HistoryRepository;
 import com.example.demo.repository.IngredientRepository;
 import com.example.demo.repository.PlanRepository;
 import java.time.DayOfWeek;
-import java.util.Comparator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,7 +25,8 @@ public class HistoryService {
   private final HistoryRepository historyRepository;
   private final IngredientRepository ingredientRepository;
 
-  public HistoryItem last(Long planId, DayOfWeek dayOfWeek, EatingTime eatingTime, String ingredient) {
+  public HistoryItem last(Long planId, DayOfWeek dayOfWeek, EatingTime eatingTime,
+      String ingredient) {
     PlanItem plan = planRepository.findByPlanId(planId).get();
     DayItem day = dayRepository.findByPlanAndDayAndEatingTime(plan, dayOfWeek, eatingTime).get();
     IngredientItem ingredientItem = ingredientRepository.findByName(ingredient).get();

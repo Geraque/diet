@@ -11,4 +11,5 @@ public class History {
   private Integer countNew;
   private Ingredient ingredientOld;
   private Integer countOld;
+  private String comment;
 }

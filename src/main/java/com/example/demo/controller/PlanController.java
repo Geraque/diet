@@ -98,9 +98,10 @@ public class PlanController implements PlanApi {
       EatingTime eatingTime,
       String ingredientOld,
       String ingredientNew,
-      String count) {
+      String count,
+      String comment) {
     PlanItem planItem = planService.update(principal, planId, dayOfWeek, eatingTime,
-        ingredientOld, ingredientNew, Integer.valueOf(count));
+        ingredientOld, ingredientNew, Integer.valueOf(count), comment);
     Plan createdPlan = planFacade.apply(planItem);
 
     return new ResponseEntity<>(createdPlan, HttpStatus.OK);

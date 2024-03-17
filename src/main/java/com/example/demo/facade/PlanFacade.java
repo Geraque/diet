@@ -69,6 +69,7 @@ public class PlanFacade {
         .id(historyItem.getId())
         .ingredientOld(apply(historyItem.getIngredientOld()))
         .ingredientNew(apply(historyItem.getIngredientNew()))
+        .comment(historyItem.getComment())
         .build();
   }
 

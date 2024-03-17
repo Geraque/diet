@@ -32,4 +32,5 @@ public class HistoryItem {
   private DayItem day;
   private Integer countNew;
   private Integer countOld;
+  private String comment;
 }

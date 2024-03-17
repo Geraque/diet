@@ -62,6 +62,7 @@ public interface PlanApi {
       @PathVariable("eatingTime") EatingTime eatingTime,
       @RequestParam(value = "ingredientOld") String ingredientOld,
       @RequestParam(value = "ingredientNew") String ingredientNew,
-      @RequestParam(value = "count") String count
+      @RequestParam(value = "count") String count,
+      @RequestParam(value = "comment") String comment
   );
 }
