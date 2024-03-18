@@ -1,9 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.api.PlanApi;
+import com.example.demo.entity.DayItem;
 import com.example.demo.entity.PlanItem;
 import com.example.demo.entity.enums.EatingTime;
 import com.example.demo.facade.PlanFacade;
+import com.example.demo.model.Day;
 import com.example.demo.model.Plan;
 import com.example.demo.service.PlanService;
 import com.example.demo.validations.ResponseErrorValidation;
@@ -105,5 +107,14 @@ public class PlanController implements PlanApi {
     Plan createdPlan = planFacade.apply(planItem);
 
     return new ResponseEntity<>(createdPlan, HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<List<Day>> getToday(Principal principal){
+    List<Day> today = planService.getToday(principal).stream()
+        .map(planFacade::apply)
+        .collect(Collectors.toList());;
+
+    return new ResponseEntity<>(today, HttpStatus.OK);
   }
 }

@@ -1,6 +1,8 @@
 package com.example.demo.api;
 
+import com.example.demo.entity.DayItem;
 import com.example.demo.entity.enums.EatingTime;
+import com.example.demo.model.Day;
 import com.example.demo.model.Plan;
 import java.security.Principal;
 import java.time.DayOfWeek;
@@ -65,4 +67,7 @@ public interface PlanApi {
       @RequestParam(value = "count") String count,
       @RequestParam(value = "comment") String comment
   );
+
+  @GetMapping("/today")
+  public ResponseEntity<List<Day>> getToday(Principal principal);
 }

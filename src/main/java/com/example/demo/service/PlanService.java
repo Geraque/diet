@@ -1,7 +1,6 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.DayItem;
-import com.example.demo.entity.FollowerItem;
 import com.example.demo.entity.HistoryItem;
 import com.example.demo.entity.IngredientDayItem;
 import com.example.demo.entity.IngredientItem;
@@ -19,6 +18,7 @@ import com.example.demo.repository.UserRepository;
 import java.security.Principal;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -174,11 +174,54 @@ public class PlanService {
     return planRepository.findByPlanId(Long.valueOf(planId)).get();
   }
 
+  public List<DayItem> getToday(Principal principal) {
+    UserItem user = getUserByPrincipal(principal);
+    PlanItem plan = followerRepository.findByUserId(user.getUserId()).getPlan();
+
+    Calendar calendar = Calendar.getInstance();
+    int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+    List<DayItem> list = new ArrayList<>();
+    for (DayItem dayItem : plan.getDays()) {
+      if (getDayOfWeek(dayOfWeek).equals(dayItem.getDay())) {
+        list.add(dayItem);
+      }
+    }
+    return list;
+  }
+
   private UserItem getUserByPrincipal(Principal principal) {
     String username = principal.getName();
     return userRepository.findUserItemByUsername(username)
         .orElseThrow(
             () -> new UsernameNotFoundException("Username not found with username " + username));
+  }
+
+  private DayOfWeek getDayOfWeek(int day) {
+    DayOfWeek dayOfWeekText = DayOfWeek.SUNDAY;
+    switch (day) {
+      case Calendar.SUNDAY:
+        dayOfWeekText = DayOfWeek.SUNDAY;
+        break;
+      case Calendar.MONDAY:
+        dayOfWeekText = DayOfWeek.MONDAY;
+        break;
+      case Calendar.TUESDAY:
+        dayOfWeekText = DayOfWeek.TUESDAY;
+        break;
+      case Calendar.WEDNESDAY:
+        dayOfWeekText = DayOfWeek.WEDNESDAY;
+        break;
+      case Calendar.THURSDAY:
+        dayOfWeekText = DayOfWeek.THURSDAY;
+        break;
+      case Calendar.FRIDAY:
+        dayOfWeekText = DayOfWeek.FRIDAY;
+        break;
+      case Calendar.SATURDAY:
+        dayOfWeekText = DayOfWeek.SATURDAY;
+        break;
+    }
+    return dayOfWeekText;
   }
 
 }
