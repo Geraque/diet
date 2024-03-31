@@ -21,8 +21,8 @@ public class IngredientController implements IngredientApi {
   private final IngredientFacade ingredientFacade;
 
   @Override
-  public ResponseEntity<List<Ingredient>> getAllRecipes() {
-    List<Ingredient> ingredients = ingredientService.getAllRecipes()
+  public ResponseEntity<List<Ingredient>> getAllIngredients() {
+    List<Ingredient> ingredients = ingredientService.getAllIngredients()
         .stream()
         .map(ingredientFacade::ingredientItemToIngredient)
         .collect(Collectors.toList());

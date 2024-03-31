@@ -4,6 +4,7 @@ import com.example.demo.entity.DayItem;
 import com.example.demo.entity.HistoryItem;
 import com.example.demo.entity.IngredientDayItem;
 import com.example.demo.entity.IngredientItem;
+import com.example.demo.entity.IngredientRealDayItem;
 import com.example.demo.entity.PlanItem;
 import com.example.demo.entity.UserItem;
 import com.example.demo.entity.enums.EatingTime;
@@ -12,8 +13,10 @@ import com.example.demo.repository.DayRepository;
 import com.example.demo.repository.FollowerRepository;
 import com.example.demo.repository.HistoryRepository;
 import com.example.demo.repository.IngredientDayRepository;
+import com.example.demo.repository.IngredientRealDayRepository;
 import com.example.demo.repository.IngredientRepository;
 import com.example.demo.repository.PlanRepository;
+import com.example.demo.repository.RealDayRepository;
 import com.example.demo.repository.UserRepository;
 import java.security.Principal;
 import java.time.DayOfWeek;
@@ -35,11 +38,13 @@ public class PlanService {
   private final PlanRepository planRepository;
   private final UserRepository userRepository;
   private final DayRepository dayRepository;
+  private final RealDayRepository realDayRepository;
   private final IngredientDayRepository ingredientDayRepository;
+  private final IngredientRealDayRepository ingredientRealDayRepository;
   private final IngredientRepository ingredientRepository;
   private final FollowerRepository followerRepository;
   private final HistoryRepository historyRepository;
-  private final EmailService emailService;
+  private final SendEmail sendEmail;
 
   public List<PlanItem> getPlansForUser(Long userId) {
     UserItem user = getUserForUserId(userId).get();
@@ -110,6 +115,21 @@ public class PlanService {
     return planRepository.findByPlanId(Long.valueOf(planId)).get();
   }
 
+  public PlanItem addIngredientReal(Principal principal, Long planId, DayOfWeek dayOfWeek,
+      EatingTime eatingTime,
+      String ingredient, Integer count) {
+    PlanItem plan = planRepository.findByPlanId(planId).get();
+
+    IngredientRealDayItem ingredientDayItem = IngredientRealDayItem.builder()
+        .day(realDayRepository.findByPlanAndDayAndEatingTime(plan, dayOfWeek, eatingTime)
+            .get())
+        .ingredient(ingredientRepository.findByName(ingredient).get())
+        .count(count)
+        .build();
+    ingredientRealDayRepository.save(ingredientDayItem);
+    return planRepository.findByPlanId(Long.valueOf(planId)).get();
+  }
+
   public PlanItem check(Principal principal, Long planId, DayOfWeek dayOfWeek,
       EatingTime eatingTime,
       String ingredient, Integer count) {
@@ -161,16 +181,18 @@ public class PlanService {
 //    EmailService emailService = new EmailService(host, port, username, password);
 
     UserItem user = userService.getUserByUsername(principal.getName());
-    String userEmail = plan.getUser().getEmail();
-    System.out.println("userEmail2 " + userEmail);
-
-    String messageText = String.format(
-        "Ваш пациент %s %s изменил ингредиент %s на %s. Комментарий: %s.",
-        user.getName(), user.getLastname(),
-        ingredientOld, ingredientNew, comment);
-
-    // Отправляем письмо
-    emailService.sendEmail(userEmail, "Изменение в плане питания", messageText);
+    sendEmail.apply(user, plan, ingredientOld, ingredientNew, comment);
+    System.out.println("Прошло");
+//    String userEmail = plan.getUser().getEmail();
+//    System.out.println("userEmail2 " + userEmail);
+//
+//    String messageText = String.format(
+//        "Ваш пациент %s %s изменил ингредиент %s на %s. Комментарий: %s.",
+//        user.getName(), user.getLastname(),
+//        ingredientOld, ingredientNew, comment);
+//
+//    // Отправляем письмо
+//    emailService.sendEmail(userEmail, "Изменение в плане питания", messageText);
     return planRepository.findByPlanId(Long.valueOf(planId)).get();
   }
 

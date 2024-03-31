@@ -16,7 +16,7 @@ public class IngredientService {
   private final IngredientRepository ingredientRepository;
 
 
-  public List<IngredientItem> getAllRecipes() {
+  public List<IngredientItem> getAllIngredients() {
     return ingredientRepository.findAllByOrderByName();
   }
 

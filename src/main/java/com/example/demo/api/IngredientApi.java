@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface IngredientApi {
 
   @GetMapping("/")
-  public ResponseEntity<List<Ingredient>> getAllRecipes();
+  public ResponseEntity<List<Ingredient>> getAllIngredients();
 
   @GetMapping("/{ingredientId}")
   public ResponseEntity<Ingredient> getIngredientById(

@@ -4,13 +4,17 @@ import com.example.demo.entity.DayItem;
 import com.example.demo.entity.HistoryItem;
 import com.example.demo.entity.IngredientDayItem;
 import com.example.demo.entity.IngredientItem;
+import com.example.demo.entity.IngredientRealDayItem;
 import com.example.demo.entity.PlanItem;
+import com.example.demo.entity.RealDayItem;
 import com.example.demo.entity.UserItem;
 import com.example.demo.model.Day;
 import com.example.demo.model.History;
 import com.example.demo.model.Ingredient;
 import com.example.demo.model.IngredientDay;
+import com.example.demo.model.IngredientRealDay;
 import com.example.demo.model.Plan;
+import com.example.demo.model.RealDay;
 import com.example.demo.model.User;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,10 +28,15 @@ public class PlanFacade {
         .map(this::apply)
         .collect(Collectors.toList());
 
+    List<RealDay> appliedRealDays = planItem.getRealDays().stream()
+        .map(this::apply)
+        .collect(Collectors.toList());
+
     return Plan.builder()
         .planId(planItem.getPlanId())
         .name(planItem.getName())
         .days(appliedDays)
+        .realDays(appliedRealDays)
         .build();
   }
 
@@ -53,8 +62,31 @@ public class PlanFacade {
         .build();
   }
 
+  public RealDay apply(RealDayItem dayItem) {
+    List<IngredientRealDay> appliedIngredients = dayItem.getIngredients().stream()
+        .map(this::apply)
+        .collect(Collectors.toList());
+
+    return RealDay.builder()
+        .dayId(dayItem.getDayId())
+        .day(dayItem.getDay())
+        .eatingTime(dayItem.getEatingTime())
+        .ingredients(appliedIngredients)
+        .date(dayItem.getDate())
+        .build();
+  }
+
   public IngredientDay apply(IngredientDayItem ingredientDayItem) {
     return IngredientDay.builder()
+        .count(ingredientDayItem.getCount())
+        .id(ingredientDayItem.getId())
+        .ingredient(apply(ingredientDayItem.getIngredient()))
+        .checkIngredient(ingredientDayItem.getCheckIngredient())
+        .build();
+  }
+
+  public IngredientRealDay apply(IngredientRealDayItem ingredientDayItem) {
+    return IngredientRealDay.builder()
         .count(ingredientDayItem.getCount())
         .id(ingredientDayItem.getId())
         .ingredient(apply(ingredientDayItem.getIngredient()))

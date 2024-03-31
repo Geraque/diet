@@ -36,6 +36,9 @@ public class PlanItem {
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "plan", orphanRemoval = true)
   private List<DayItem> days = new ArrayList<>();
 
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "plan", orphanRemoval = true)
+  private List<RealDayItem> realDays = new ArrayList<>();
+
   @Override
   public String toString() {
     return "PlanItem{" +
