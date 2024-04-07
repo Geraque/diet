@@ -6,6 +6,7 @@ import com.example.demo.repository.NotificationRepository;
 import com.example.demo.repository.UserRepository;
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,13 +23,25 @@ public class NotificationService {
   public List<NotificationItem> getAllByUser(Principal principal){
     UserItem user = getUserByPrincipal(principal);
     return notificationRepository.findAllByUserOrderByDate(
-        user);
+            user).stream()
+        .filter(item -> !item.getIsDeleted())
+        .collect(Collectors.toList());
   }
 
   public List<NotificationItem> read(Long id, Principal principal){
     notificationRepository.findById(id)
         .map(n -> {
           n.setIsRead(true);
+          return n;
+        }).ifPresent(notificationRepository::save);
+
+    return getAllByUser(principal);
+  }
+
+  public List<NotificationItem> delete(Long id, Principal principal) {
+    notificationRepository.findById(id)
+        .map(n -> {
+          n.setIsDeleted(true);
           return n;
         }).ifPresent(notificationRepository::save);
 

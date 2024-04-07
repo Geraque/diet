@@ -132,6 +132,7 @@ public class PlanFacade {
         .date(item.getDate())
         .user(item.getUser().getUserId())
         .isRead(item.getIsRead())
+        .isDeleted(item.getIsDeleted())
         .build();
   }
 }

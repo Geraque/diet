@@ -31,4 +31,5 @@ public class NotificationItem {
   private String text;
   private ZonedDateTime date;
   private Boolean isRead;
+  private Boolean isDeleted;
 }

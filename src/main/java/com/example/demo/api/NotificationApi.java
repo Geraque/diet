@@ -19,6 +19,11 @@ public interface NotificationApi {
   public ResponseEntity<List<Notification>> getAllByUser(Principal principal) throws IOException;
 
   @CrossOrigin
-  @PostMapping("/{id}")
+  @PostMapping("/{id}/read")
   public ResponseEntity<List<Notification>> read(@PathVariable("id") Long id, Principal principal) throws IOException;
+
+  @CrossOrigin
+  @PostMapping("/{id}/delete")
+  public ResponseEntity<List<Notification>> delete(@PathVariable("id") Long id, Principal principal)
+      throws IOException;
 }

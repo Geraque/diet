@@ -22,6 +22,7 @@ public class SendNotification {
         .text(text)
         .date(LocalDateTime.now().atZone(ZoneId.of("UTC+4")))
         .isRead(false)
+        .isDeleted(false)
         .build();
     repository.save(notification);
   }

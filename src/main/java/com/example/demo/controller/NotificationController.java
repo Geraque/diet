@@ -38,5 +38,18 @@ public class NotificationController implements NotificationApi {
         .collect(Collectors.toList());
 
     return new ResponseEntity<>(notifications, HttpStatus.OK);
+  }
+
+  ;
+
+  @Override
+  public ResponseEntity<List<Notification>> delete(Long id, Principal principal)
+      throws IOException {
+    List<Notification> notifications = notificationService.delete(id, principal)
+        .stream()
+        .map(planFacade::apply)
+        .collect(Collectors.toList());
+
+    return new ResponseEntity<>(notifications, HttpStatus.OK);
   };
 }
