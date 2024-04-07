@@ -105,13 +105,24 @@ public class PlanService {
       String ingredient, Integer count) {
     PlanItem plan = planRepository.findByPlanId(planId).get();
 
-    IngredientDayItem ingredientDayItem = IngredientDayItem.builder()
-        .day(dayRepository.findByPlanAndDayAndEatingTime(plan, dayOfWeek, eatingTime)
-            .get())
-        .ingredient(ingredientRepository.findByName(ingredient).get())
-        .count(count)
-        .build();
-    ingredientDayRepository.save(ingredientDayItem);
+    IngredientItem ingredientItem = ingredientRepository.findByName(ingredient).get();
+    DayItem day = dayRepository.findByPlanAndDayAndEatingTime(plan, dayOfWeek, eatingTime).get();
+    Optional<IngredientDayItem> ingredientDay = ingredientDayRepository.findByDayAndIngredient(
+        day, ingredientItem);
+
+    if(ingredientDay.isPresent()){
+      ingredientDay.get().setCount(ingredientDay.get().getCount()+count);
+      ingredientDayRepository.save(ingredientDay.get());
+    }
+    else {
+      IngredientDayItem ingredientDayItem = IngredientDayItem.builder()
+          .day(dayRepository.findByPlanAndDayAndEatingTime(plan, dayOfWeek, eatingTime)
+              .get())
+          .ingredient(ingredientRepository.findByName(ingredient).get())
+          .count(count)
+          .build();
+      ingredientDayRepository.save(ingredientDayItem);
+    }
     return planRepository.findByPlanId(Long.valueOf(planId)).get();
   }
 
