@@ -16,7 +16,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Data
 @Entity
@@ -24,6 +23,7 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class PlanItem {
 
   @Id
@@ -45,7 +45,6 @@ public class PlanItem {
         "planId=" + planId +
         ", name='" + name + '\'' +
         ", user=" + user +
-        ", days=" + days +
         '}';
   }
 }

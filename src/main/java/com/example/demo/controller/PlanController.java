@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.api.PlanApi;
-import com.example.demo.entity.DayItem;
 import com.example.demo.entity.PlanItem;
 import com.example.demo.entity.enums.EatingTime;
 import com.example.demo.facade.PlanFacade;
@@ -17,8 +16,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.ObjectUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -51,15 +48,9 @@ public class PlanController implements PlanApi {
   }
 
   @Override
-  public ResponseEntity<Object> createPlan(Plan plan,
-      BindingResult bindingResult,
+  public ResponseEntity<Object> createPlan(String name,
       Principal principal) {
-    ResponseEntity<Object> errors = responseErrorValidation.mapValidationService(bindingResult);
-    if (!ObjectUtils.isEmpty(errors)) {
-      return errors;
-    }
-
-    PlanItem planItem = planService.createPlan(plan, principal);
+    PlanItem planItem = planService.createPlan(name, principal);
     Plan createdPlan = planFacade.apply(planItem);
 
     return new ResponseEntity<>(createdPlan, HttpStatus.OK);

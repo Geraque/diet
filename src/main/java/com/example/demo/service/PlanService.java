@@ -8,7 +8,6 @@ import com.example.demo.entity.IngredientRealDayItem;
 import com.example.demo.entity.PlanItem;
 import com.example.demo.entity.UserItem;
 import com.example.demo.entity.enums.EatingTime;
-import com.example.demo.model.Plan;
 import com.example.demo.repository.DayRepository;
 import com.example.demo.repository.FollowerRepository;
 import com.example.demo.repository.HistoryRepository;
@@ -68,11 +67,11 @@ public class PlanService {
     return userRepository.findUserItemByUserId(userId);
   }
 
-  public PlanItem createPlan(Plan plan, Principal principal) {
+  public PlanItem createPlan(String name, Principal principal) {
     UserItem user = getUserByPrincipal(principal);
 
     PlanItem planItem = PlanItem.builder()
-        .name(plan.getName())
+        .name(name)
         .user(user)
         .build();
 
@@ -88,9 +87,22 @@ public class PlanService {
       }
     }
 
-    log.info("Saving Recipe for User: {}", user.getEmail());
+//    for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
+//      for (EatingTime eatingTime : EatingTime.values()) {
+//        RealDayItem dayItem = RealDayItem.builder()
+//            .plan(planItem)
+//            .day(dayOfWeek)
+//            .eatingTime(eatingTime)
+//            .build();
+//        dayItem.setPlan(planItem);
+//        dayItem.setDay(dayOfWeek);
+//        dayItem.setEatingTime(eatingTime);
+//        dayRepository.save(dayItem);
+//      }
+//    }
 
-    return planItem;
+    log.info("Saving Recipe for User: {}", user.getEmail());
+    return planRepository.findByName(name).get();
   }
 
   public PlanItem addIngredient(Principal principal, Long planId, DayOfWeek dayOfWeek,

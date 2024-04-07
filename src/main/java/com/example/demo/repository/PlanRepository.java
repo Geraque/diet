@@ -13,4 +13,6 @@ public interface PlanRepository extends JpaRepository<PlanItem, Long> {
   List<PlanItem> findAllByUserOrderByName(UserItem user);
 
   Optional<PlanItem> findByPlanId(Long planId);
+
+  Optional<PlanItem> findByName(String name);
 }

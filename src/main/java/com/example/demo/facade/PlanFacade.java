@@ -18,6 +18,7 @@ import com.example.demo.model.Notification;
 import com.example.demo.model.Plan;
 import com.example.demo.model.RealDay;
 import com.example.demo.model.User;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
@@ -26,14 +27,19 @@ import org.springframework.stereotype.Component;
 public class PlanFacade {
 
   public Plan apply(PlanItem planItem) {
-    List<Day> appliedDays = planItem.getDays().stream()
-        .map(this::apply)
-        .collect(Collectors.toList());
+    List<Day> appliedDays = new ArrayList<>();
+    if (planItem.getDays() != null) {
+      appliedDays = planItem.getDays().stream()
+          .map(this::apply)
+          .collect(Collectors.toList());
+    }
 
-    List<RealDay> appliedRealDays = planItem.getRealDays().stream()
-        .map(this::apply)
-        .collect(Collectors.toList());
-
+    List<RealDay> appliedRealDays = new ArrayList<>();
+    if (planItem.getRealDays() != null) {
+      appliedRealDays = planItem.getRealDays().stream()
+          .map(this::apply)
+          .collect(Collectors.toList());
+    }
     return Plan.builder()
         .planId(planItem.getPlanId())
         .name(planItem.getName())
