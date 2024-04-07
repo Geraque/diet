@@ -32,4 +32,12 @@ public interface UserApi {
     @CrossOrigin
     @PostMapping("/isAdmin/{userId}")
     public ResponseEntity<Boolean> isAdmin(@PathVariable("userId") String userId);
+
+    @CrossOrigin
+    @PostMapping("/isDiet2/{userId}")
+    public ResponseEntity<Boolean> isDiet2(@PathVariable("userId") String userId);
+
+    @CrossOrigin
+    @PostMapping("/isDiet")
+    public ResponseEntity<Boolean> isDiet(Principal principal);
 }

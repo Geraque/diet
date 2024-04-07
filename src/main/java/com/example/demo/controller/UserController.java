@@ -79,4 +79,15 @@ public class UserController implements UserApi {
     return new ResponseEntity<>(bool, HttpStatus.OK);
   }
 
+  @Override
+  public ResponseEntity<Boolean> isDiet2(String userId) {
+    Boolean bool = userService.isDiet2(Long.parseLong(userId));
+    return new ResponseEntity<>(bool, HttpStatus.OK);
+  }
+  @Override
+  public ResponseEntity<Boolean> isDiet(Principal principal) {
+    Boolean bool = userService.isDiet(principal);
+    return new ResponseEntity<>(bool, HttpStatus.OK);
+  }
+
 }
