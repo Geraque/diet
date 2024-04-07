@@ -18,6 +18,7 @@ import com.example.demo.repository.IngredientRepository;
 import com.example.demo.repository.PlanRepository;
 import com.example.demo.repository.RealDayRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.service.utils.SendEmail;
 import java.security.Principal;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
@@ -68,35 +69,27 @@ public class PlanService {
   }
 
   public PlanItem createPlan(Plan plan, Principal principal) {
-    // Получение пользователя
     UserItem user = getUserByPrincipal(principal);
 
-    // Создание PlanItem
     PlanItem planItem = PlanItem.builder()
         .name(plan.getName())
         .user(user)
         .build();
 
-    // Сохранение PlanItem в репозиторий
     planRepository.save(planItem);
 
-    // Создание DayItems и привязка к PlanItem
     for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
       for (EatingTime eatingTime : EatingTime.values()) {
         DayItem dayItem = new DayItem();
-        dayItem.setPlan(planItem); // Привязываем к только что созданному planItem
+        dayItem.setPlan(planItem);
         dayItem.setDay(dayOfWeek);
         dayItem.setEatingTime(eatingTime);
-        // Сохрани dayItem используя соответствующий репозиторий
-        // Не забудь проверить/создать соответствующий метод в репозитории
         dayRepository.save(dayItem);
       }
     }
 
-    // Логгирование создания плана
     log.info("Saving Recipe for User: {}", user.getEmail());
 
-    // Возврат созданного плана
     return planItem;
   }
 
@@ -110,11 +103,10 @@ public class PlanService {
     Optional<IngredientDayItem> ingredientDay = ingredientDayRepository.findByDayAndIngredient(
         day, ingredientItem);
 
-    if(ingredientDay.isPresent()){
-      ingredientDay.get().setCount(ingredientDay.get().getCount()+count);
+    if (ingredientDay.isPresent()) {
+      ingredientDay.get().setCount(ingredientDay.get().getCount() + count);
       ingredientDayRepository.save(ingredientDay.get());
-    }
-    else {
+    } else {
       IngredientDayItem ingredientDayItem = IngredientDayItem.builder()
           .day(dayRepository.findByPlanAndDayAndEatingTime(plan, dayOfWeek, eatingTime)
               .get())
@@ -184,26 +176,8 @@ public class PlanService {
         .build();
     historyRepository.save(historyItem);
 
-    // Создаём экземпляр EmailService
-//    String host = "smtp.mail.ru"; // SMTP сервер вашего почтового провайдера
-//    String port = "465"; // Порт SMTP сервера
-//    String username = "alekspavlov04@mail.ru"; // Ваш email
-//    String password = "Gfhjkmvjq0"; // Ваш пароль
-//    EmailService emailService = new EmailService(host, port, username, password);
-
     UserItem user = userService.getUserByUsername(principal.getName());
     sendEmail.apply(user, plan, ingredientOld, ingredientNew, comment);
-    System.out.println("Прошло");
-//    String userEmail = plan.getUser().getEmail();
-//    System.out.println("userEmail2 " + userEmail);
-//
-//    String messageText = String.format(
-//        "Ваш пациент %s %s изменил ингредиент %s на %s. Комментарий: %s.",
-//        user.getName(), user.getLastname(),
-//        ingredientOld, ingredientNew, comment);
-//
-//    // Отправляем письмо
-//    emailService.sendEmail(userEmail, "Изменение в плане питания", messageText);
     return planRepository.findByPlanId(Long.valueOf(planId)).get();
   }
 

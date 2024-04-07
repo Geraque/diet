@@ -1,7 +1,8 @@
-package com.example.demo.service;
+package com.example.demo.service.utils;
 
 import com.example.demo.entity.PlanItem;
 import com.example.demo.entity.UserItem;
+import com.example.demo.service.EmailService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 public class SendEmail {
 
   private final EmailService emailService;
+  private final SendNotification sendNotification;
+  private final String HEADING = "Изменение в плане питания";
   @Async
   public void apply(UserItem user, PlanItem plan, String ingredientOld, String ingredientNew,
       String comment) {
@@ -25,8 +28,8 @@ public class SendEmail {
         user.getName(), user.getLastname(),
         ingredientOld, ingredientNew, comment);
 
-    // Отправляем письмо
-    emailService.sendEmail(userEmail, "Изменение в плане питания", messageText);
+    sendNotification.apply(plan.getUser(), HEADING, messageText);
+    emailService.sendEmail(userEmail, HEADING, messageText);
     System.out.println("Закончилась отправка письма");
   }
 }

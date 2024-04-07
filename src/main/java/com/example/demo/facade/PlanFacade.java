@@ -5,6 +5,7 @@ import com.example.demo.entity.HistoryItem;
 import com.example.demo.entity.IngredientDayItem;
 import com.example.demo.entity.IngredientItem;
 import com.example.demo.entity.IngredientRealDayItem;
+import com.example.demo.entity.NotificationItem;
 import com.example.demo.entity.PlanItem;
 import com.example.demo.entity.RealDayItem;
 import com.example.demo.entity.UserItem;
@@ -13,6 +14,7 @@ import com.example.demo.model.History;
 import com.example.demo.model.Ingredient;
 import com.example.demo.model.IngredientDay;
 import com.example.demo.model.IngredientRealDay;
+import com.example.demo.model.Notification;
 import com.example.demo.model.Plan;
 import com.example.demo.model.RealDay;
 import com.example.demo.model.User;
@@ -116,4 +118,14 @@ public class PlanFacade {
         .build();
   }
 
+  public Notification apply(NotificationItem item) {
+    return Notification.builder()
+        .id(item.getId())
+        .heading(item.getHeading())
+        .text(item.getText())
+        .date(item.getDate())
+        .user(item.getUser().getUserId())
+        .isRead(item.getIsRead())
+        .build();
+  }
 }
