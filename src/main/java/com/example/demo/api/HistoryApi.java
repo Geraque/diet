@@ -20,4 +20,13 @@ public interface HistoryApi {
       @PathVariable("eatingTime") EatingTime eatingTime,
       @RequestParam(value = "ingredientNew") String ingredientNew
   );
+
+  @PostMapping("/{planId}/{dayOfWeek}/{eatingTime}/last/real")
+  public ResponseEntity<Object> lastReal(
+      @PathVariable("planId") Long planId,
+      @PathVariable("dayOfWeek") DayOfWeek dayOfWeek,
+      @PathVariable("eatingTime") EatingTime eatingTime,
+      @RequestParam(value = "ingredientNew") String ingredientNew,
+      @RequestParam(value = "date") String date
+  );
 }

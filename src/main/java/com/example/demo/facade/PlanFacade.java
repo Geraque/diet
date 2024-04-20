@@ -8,6 +8,7 @@ import com.example.demo.entity.IngredientRealDayItem;
 import com.example.demo.entity.NotificationItem;
 import com.example.demo.entity.PlanItem;
 import com.example.demo.entity.RealDayItem;
+import com.example.demo.entity.RealHistoryItem;
 import com.example.demo.entity.UserItem;
 import com.example.demo.model.Day;
 import com.example.demo.model.History;
@@ -103,6 +104,17 @@ public class PlanFacade {
   }
 
   public History apply(HistoryItem historyItem) {
+    return History.builder()
+        .countOld(historyItem.getCountOld())
+        .countNew(historyItem.getCountNew())
+        .id(historyItem.getId())
+        .ingredientOld(apply(historyItem.getIngredientOld()))
+        .ingredientNew(apply(historyItem.getIngredientNew()))
+        .comment(historyItem.getComment())
+        .build();
+  }
+
+  public History apply(RealHistoryItem historyItem) {
     return History.builder()
         .countOld(historyItem.getCountOld())
         .countNew(historyItem.getCountNew())

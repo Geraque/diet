@@ -48,7 +48,8 @@ public interface PlanApi {
       @PathVariable("dayOfWeek") DayOfWeek dayOfWeek,
       @PathVariable("eatingTime") EatingTime eatingTime,
       @RequestParam(value = "ingredient") String ingredient,
-      @RequestParam(value = "count") String count
+      @RequestParam(value = "count") String count,
+      @RequestParam(value = "date") String date
   );
 
   @PostMapping("/{planId}/{dayOfWeek}/{eatingTime}/check")
@@ -61,6 +62,17 @@ public interface PlanApi {
       @RequestParam(value = "count") String count
   );
 
+  @PostMapping("/{planId}/{dayOfWeek}/{eatingTime}/check/real")
+  public ResponseEntity<Object> checkReal(
+      Principal principal,
+      @PathVariable("planId") Long planId,
+      @PathVariable("dayOfWeek") DayOfWeek dayOfWeek,
+      @PathVariable("eatingTime") EatingTime eatingTime,
+      @RequestParam(value = "ingredient") String ingredient,
+      @RequestParam(value = "count") String count,
+      @RequestParam(value = "date") String date
+  );
+
   @PostMapping("/{planId}/{dayOfWeek}/{eatingTime}/update")
   public ResponseEntity<Object> update(
       Principal principal,
@@ -71,6 +83,19 @@ public interface PlanApi {
       @RequestParam(value = "ingredientNew") String ingredientNew,
       @RequestParam(value = "count") String count,
       @RequestParam(value = "comment") String comment
+  );
+
+  @PostMapping("/{planId}/{dayOfWeek}/{eatingTime}/update/real")
+  public ResponseEntity<Object> updateReal(
+      Principal principal,
+      @PathVariable("planId") Long planId,
+      @PathVariable("dayOfWeek") DayOfWeek dayOfWeek,
+      @PathVariable("eatingTime") EatingTime eatingTime,
+      @RequestParam(value = "ingredientOld") String ingredientOld,
+      @RequestParam(value = "ingredientNew") String ingredientNew,
+      @RequestParam(value = "count") String count,
+      @RequestParam(value = "comment") String comment,
+      @RequestParam(value = "date") String date
   );
 
   @GetMapping("/today")

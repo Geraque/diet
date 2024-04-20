@@ -7,9 +7,9 @@ import com.example.demo.facade.PlanFacade;
 import com.example.demo.model.Day;
 import com.example.demo.model.Plan;
 import com.example.demo.service.PlanService;
-import com.example.demo.validations.ResponseErrorValidation;
 import java.security.Principal;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -25,7 +25,6 @@ public class PlanController implements PlanApi {
 
   private final PlanService planService;
   private final PlanFacade planFacade;
-  private ResponseErrorValidation responseErrorValidation;
 
   @Override
   public ResponseEntity<List<Plan>> getPlansByUserId(String userId) {
@@ -76,9 +75,10 @@ public class PlanController implements PlanApi {
       DayOfWeek dayOfWeek,
       EatingTime eatingTime,
       String ingredient,
-      String count) {
+      String count,
+      String date) {
     PlanItem planItem = planService.addIngredientReal(principal, planId, dayOfWeek, eatingTime,
-        ingredient, Integer.valueOf(count));
+        ingredient, Integer.valueOf(count), LocalDate.parse(date));
     Plan createdPlan = planFacade.apply(planItem);
 
     return new ResponseEntity<>(createdPlan, HttpStatus.OK);
@@ -99,6 +99,21 @@ public class PlanController implements PlanApi {
   }
 
   @Override
+  public ResponseEntity<Object> checkReal(Principal principal,
+      Long planId,
+      DayOfWeek dayOfWeek,
+      EatingTime eatingTime,
+      String ingredient,
+      String count,
+      String date) {
+    PlanItem planItem = planService.checkReal(principal, planId, dayOfWeek, eatingTime,
+        ingredient, Integer.valueOf(count), LocalDate.parse(date));
+    Plan createdPlan = planFacade.apply(planItem);
+
+    return new ResponseEntity<>(createdPlan, HttpStatus.OK);
+  }
+
+  @Override
   public ResponseEntity<Object> update(Principal principal,
       Long planId,
       DayOfWeek dayOfWeek,
@@ -109,6 +124,23 @@ public class PlanController implements PlanApi {
       String comment) {
     PlanItem planItem = planService.update(principal, planId, dayOfWeek, eatingTime,
         ingredientOld, ingredientNew, Integer.valueOf(count), comment);
+    Plan createdPlan = planFacade.apply(planItem);
+
+    return new ResponseEntity<>(createdPlan, HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<Object> updateReal(Principal principal,
+      Long planId,
+      DayOfWeek dayOfWeek,
+      EatingTime eatingTime,
+      String ingredientOld,
+      String ingredientNew,
+      String count,
+      String comment,
+      String date) {
+    PlanItem planItem = planService.updateReal(principal, planId, dayOfWeek, eatingTime,
+        ingredientOld, ingredientNew, Integer.valueOf(count), comment, LocalDate.parse(date));
     Plan createdPlan = planFacade.apply(planItem);
 
     return new ResponseEntity<>(createdPlan, HttpStatus.OK);
