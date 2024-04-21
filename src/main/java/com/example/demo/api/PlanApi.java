@@ -57,12 +57,13 @@ public interface PlanApi {
       @RequestParam(value = "count") String count
   );
 
-  @DeleteMapping("/{planId}/{dayOfWeek}/{eatingTime}/delete")
+  @DeleteMapping("/{planId}/{dayOfWeek}/{eatingTime}/{ingredient}/delete")
   public ResponseEntity<Object> deleteIngredient(
+      Principal principal,
       @PathVariable("planId") Long planId,
       @PathVariable("dayOfWeek") DayOfWeek dayOfWeek,
       @PathVariable("eatingTime") EatingTime eatingTime,
-      @RequestParam(value = "ingredient") String ingredient
+      @PathVariable("ingredient") String ingredient
   );
 
   @PostMapping("/{planId}/{dayOfWeek}/{eatingTime}/ingredient/real")

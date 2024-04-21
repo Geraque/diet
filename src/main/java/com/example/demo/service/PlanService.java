@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
+import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -53,12 +54,13 @@ public class PlanService {
   private final HistoryRepository historyRepository;
   private final RealHistoryRepository realHistoryRepository;
 
-
+  @Transactional
   public List<PlanItem> getPlansForUser(Long userId) {
     UserItem user = getUserForUserId(userId).get();
     return planRepository.findAllByUserOrderByName(user);
   }
 
+  @Transactional
   public List<PlanItem> getPlansForUser(Principal principal) {
     UserItem user = getUserByPrincipal(principal);
     if (userService.isDiet(principal) || userService.isAdmin(user.getUserId())) {
@@ -75,6 +77,7 @@ public class PlanService {
     return userRepository.findUserItemByUserId(userId);
   }
 
+  @Transactional
   public PlanItem createPlan(String name, Principal principal) {
     UserItem user = getUserByPrincipal(principal);
 
@@ -114,6 +117,7 @@ public class PlanService {
     return planRepository.findByName(name).get();
   }
 
+  @Transactional
   public PlanItem copy(Long planId, Long copyPlanId, Principal principal) {
     UserItem user = getUserByPrincipal(principal);
     PlanItem plan = planRepository.findByPlanId(planId).get();
@@ -136,6 +140,7 @@ public class PlanService {
     return planRepository.findByPlanId(planId).get();
   }
 
+  @Transactional
   public PlanItem ready(Long planId, String userName, Integer week, LocalDate date,
       Principal principal) {
     UserItem user = userService.getUserByUsername(userName);
@@ -191,6 +196,7 @@ public class PlanService {
     return planRepository.findByPlanId(planId).get();
   }
 
+  @Transactional
   public PlanItem addIngredient(Principal principal, Long planId, DayOfWeek dayOfWeek,
       EatingTime eatingTime,
       String ingredient, Integer count) {
@@ -216,21 +222,24 @@ public class PlanService {
     return planRepository.findByPlanId(Long.valueOf(planId)).get();
   }
 
-  public PlanItem deleteIngredient(Long planId, DayOfWeek dayOfWeek,
+  @Transactional
+  public PlanItem deleteIngredient(Principal principal, Long planId, DayOfWeek dayOfWeek,
       EatingTime eatingTime,
       String ingredient) {
     PlanItem plan = planRepository.findByPlanId(planId).get();
 
     IngredientItem ingredientItem = ingredientRepository.findByName(ingredient).get();
     DayItem day = dayRepository.findByPlanAndDayAndEatingTime(plan, dayOfWeek, eatingTime).get();
-    Optional<IngredientDayItem> ingredientDay = ingredientDayRepository.findByDayAndIngredient(
-        day, ingredientItem);
+    IngredientDayItem ingredientDay = ingredientDayRepository.findByDayAndIngredient(
+        day, ingredientItem).get();
+    System.out.println("zzzzzz: " + ingredientDay.getId());
+    System.out.println("xxxxxxxxxxxxxx: " + day.getDayId());
+    ingredientDayRepository.delete(ingredientDay);
 
-    ingredientDayRepository.delete(ingredientDay.get());
-
-    return planRepository.findByPlanId(Long.valueOf(planId)).get();
+    return planRepository.findByPlanId(planId).get();
   }
 
+  @Transactional
   public PlanItem addIngredientReal(Principal principal, Long planId, DayOfWeek dayOfWeek,
       EatingTime eatingTime,
       String ingredient, Integer count, LocalDate date) {
@@ -247,6 +256,7 @@ public class PlanService {
     return planRepository.findByPlanId(planId).get();
   }
 
+  @Transactional
   public PlanItem check(Principal principal, Long planId, DayOfWeek dayOfWeek,
       EatingTime eatingTime,
       String ingredient, Integer count) {
@@ -260,6 +270,7 @@ public class PlanService {
     return planRepository.findByPlanId(planId).get();
   }
 
+  @Transactional
   public PlanItem checkReal(Principal principal, Long planId, DayOfWeek dayOfWeek,
       EatingTime eatingTime,
       String ingredient, Integer count, LocalDate date) {
@@ -275,6 +286,7 @@ public class PlanService {
     return planRepository.findByPlanId(planId).get();
   }
 
+  @Transactional
   public PlanItem update(Principal principal, Long planId, DayOfWeek dayOfWeek,
       EatingTime eatingTime,
       String ingredientOld, String ingredientNew, Integer count, String comment) {
@@ -310,6 +322,7 @@ public class PlanService {
     return planRepository.findByPlanId(Long.valueOf(planId)).get();
   }
 
+  @Transactional
   public PlanItem updateReal(Principal principal, Long planId, DayOfWeek dayOfWeek,
       EatingTime eatingTime,
       String ingredientOld, String ingredientNew, Integer count, String comment, LocalDate date) {
@@ -348,6 +361,7 @@ public class PlanService {
     return planRepository.findByPlanId(Long.valueOf(planId)).get();
   }
 
+  @Transactional
   public List<DayItem> getToday(Principal principal) {
     UserItem user = getUserByPrincipal(principal);
     PlanItem plan = followerRepository.findByUserId(user.getUserId()).getPlan();
