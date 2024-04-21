@@ -112,6 +112,28 @@ public class PlanService {
     return planRepository.findByName(name).get();
   }
 
+  public PlanItem copy(Long planId, Long copyPlanId, Principal principal) {
+    UserItem user = getUserByPrincipal(principal);
+    PlanItem plan = planRepository.findByPlanId(planId).get();
+    PlanItem planCopy = planRepository.findByPlanId(copyPlanId).get();
+
+    for (DayItem day : planCopy.getDays()) {
+      for (IngredientDayItem ingredientDay : day.getIngredients()) {
+        IngredientDayItem ingredientDayItem = IngredientDayItem.builder()
+            .ingredient(ingredientDay.getIngredient())
+            .count(ingredientDay.getCount())
+            .checkIngredient(null) //Чтобы не перенимать отмену и тд
+            .day(plan.getDays().stream().filter(item -> item.getDay().equals(day.getDay()) &&
+                item.getEatingTime().equals(day.getEatingTime())).findFirst().get())
+            .build();
+        ingredientDayRepository.save(ingredientDayItem);
+      }
+    }
+
+    log.info("Copy plan from {} to {} for User: {}", planId, copyPlanId, user.getEmail());
+    return planRepository.findByPlanId(planId).get();
+  }
+
   public PlanItem ready(Long planId, String userName, Integer week, LocalDate date,
       Principal principal) {
     UserItem user = userService.getUserByUsername(userName);

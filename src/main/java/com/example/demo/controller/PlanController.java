@@ -62,6 +62,16 @@ public class PlanController implements PlanApi {
 
   @Override
   @Transactional
+  public ResponseEntity<Object> copy(String planId, String copyPlanId,
+      Principal principal) {
+    PlanItem planItem = planService.copy(Long.valueOf(planId), Long.valueOf(copyPlanId), principal);
+    Plan createdPlan = planFacade.apply(planItem);
+
+    return new ResponseEntity<>(createdPlan, HttpStatus.OK);
+  }
+
+  @Override
+  @Transactional
   public ResponseEntity<Object> ready(String planId,
       String userName,
       String week,

@@ -31,6 +31,13 @@ public interface PlanApi {
       @RequestParam(value = "name") String name,
       Principal principal);
 
+
+  @PostMapping("/copy")
+  public ResponseEntity<Object> copy(
+      @RequestParam(value = "planId") String planId,
+      @RequestParam(value = "copyPlanId") String copyPlanId,
+      Principal principal);
+
   @PostMapping("/ready")
   public ResponseEntity<Object> ready(
       @RequestParam(value = "planId") String planId,
