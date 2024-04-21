@@ -8,6 +8,7 @@ import java.time.DayOfWeek;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,6 +55,14 @@ public interface PlanApi {
       @PathVariable("eatingTime") EatingTime eatingTime,
       @RequestParam(value = "ingredient") String ingredient,
       @RequestParam(value = "count") String count
+  );
+
+  @DeleteMapping("/{planId}/{dayOfWeek}/{eatingTime}/delete")
+  public ResponseEntity<Object> deleteIngredient(
+      @PathVariable("planId") Long planId,
+      @PathVariable("dayOfWeek") DayOfWeek dayOfWeek,
+      @PathVariable("eatingTime") EatingTime eatingTime,
+      @RequestParam(value = "ingredient") String ingredient
   );
 
   @PostMapping("/{planId}/{dayOfWeek}/{eatingTime}/ingredient/real")

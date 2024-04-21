@@ -101,6 +101,18 @@ public class PlanController implements PlanApi {
 
   @Override
   @Transactional
+  public ResponseEntity<Object> deleteIngredient(Long planId,
+      DayOfWeek dayOfWeek,
+      EatingTime eatingTime,
+      String ingredient) {
+    PlanItem planItem = planService.deleteIngredient(planId, dayOfWeek, eatingTime, ingredient);
+    Plan createdPlan = planFacade.apply(planItem);
+
+    return new ResponseEntity<>(createdPlan, HttpStatus.OK);
+  }
+
+  @Override
+  @Transactional
   public ResponseEntity<Object> addIngredientReal(Principal principal,
       Long planId,
       DayOfWeek dayOfWeek,

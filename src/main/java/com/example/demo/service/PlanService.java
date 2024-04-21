@@ -40,6 +40,8 @@ import org.springframework.stereotype.Service;
 public class PlanService {
 
   private final UserService userService;
+  private final SendEmail sendEmail;
+
   private final PlanRepository planRepository;
   private final UserRepository userRepository;
   private final DayRepository dayRepository;
@@ -50,7 +52,7 @@ public class PlanService {
   private final FollowerRepository followerRepository;
   private final HistoryRepository historyRepository;
   private final RealHistoryRepository realHistoryRepository;
-  private final SendEmail sendEmail;
+
 
   public List<PlanItem> getPlansForUser(Long userId) {
     UserItem user = getUserForUserId(userId).get();
@@ -211,6 +213,21 @@ public class PlanService {
           .build();
       ingredientDayRepository.save(ingredientDayItem);
     }
+    return planRepository.findByPlanId(Long.valueOf(planId)).get();
+  }
+
+  public PlanItem deleteIngredient(Long planId, DayOfWeek dayOfWeek,
+      EatingTime eatingTime,
+      String ingredient) {
+    PlanItem plan = planRepository.findByPlanId(planId).get();
+
+    IngredientItem ingredientItem = ingredientRepository.findByName(ingredient).get();
+    DayItem day = dayRepository.findByPlanAndDayAndEatingTime(plan, dayOfWeek, eatingTime).get();
+    Optional<IngredientDayItem> ingredientDay = ingredientDayRepository.findByDayAndIngredient(
+        day, ingredientItem);
+
+    ingredientDayRepository.delete(ingredientDay.get());
+
     return planRepository.findByPlanId(Long.valueOf(planId)).get();
   }
 
