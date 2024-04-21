@@ -10,8 +10,10 @@ import com.example.demo.service.PlanService;
 import java.security.Principal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -27,6 +29,7 @@ public class PlanController implements PlanApi {
   private final PlanFacade planFacade;
 
   @Override
+  @Transactional
   public ResponseEntity<List<Plan>> getPlansByUserId(String userId) {
     List<Plan> plans = planService.getPlansForUser(Long.valueOf(userId))
         .stream()
@@ -37,6 +40,7 @@ public class PlanController implements PlanApi {
   }
 
   @Override
+  @Transactional
   public ResponseEntity<List<Plan>> getPlansByCurrentUser(Principal principal) {
     List<Plan> plans = planService.getPlansForUser(principal)
         .stream()
@@ -47,6 +51,7 @@ public class PlanController implements PlanApi {
   }
 
   @Override
+  @Transactional
   public ResponseEntity<Object> createPlan(String name,
       Principal principal) {
     PlanItem planItem = planService.createPlan(name, principal);
@@ -56,6 +61,21 @@ public class PlanController implements PlanApi {
   }
 
   @Override
+  @Transactional
+  public ResponseEntity<Object> ready(String planId,
+      String userName,
+      String week,
+      String date,
+      Principal principal) {
+    PlanItem planItem = planService.ready(Long.valueOf(planId), userName, Integer.valueOf(week),
+        LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.yyyy")), principal);
+    Plan createdPlan = planFacade.apply(planItem);
+
+    return new ResponseEntity<>(createdPlan, HttpStatus.OK);
+  }
+
+  @Override
+  @Transactional
   public ResponseEntity<Object> addIngredient(Principal principal,
       Long planId,
       DayOfWeek dayOfWeek,
@@ -70,6 +90,7 @@ public class PlanController implements PlanApi {
   }
 
   @Override
+  @Transactional
   public ResponseEntity<Object> addIngredientReal(Principal principal,
       Long planId,
       DayOfWeek dayOfWeek,
@@ -85,6 +106,7 @@ public class PlanController implements PlanApi {
   }
 
   @Override
+  @Transactional
   public ResponseEntity<Object> check(Principal principal,
       Long planId,
       DayOfWeek dayOfWeek,
@@ -99,6 +121,7 @@ public class PlanController implements PlanApi {
   }
 
   @Override
+  @Transactional
   public ResponseEntity<Object> checkReal(Principal principal,
       Long planId,
       DayOfWeek dayOfWeek,
@@ -114,6 +137,7 @@ public class PlanController implements PlanApi {
   }
 
   @Override
+  @Transactional
   public ResponseEntity<Object> update(Principal principal,
       Long planId,
       DayOfWeek dayOfWeek,
@@ -130,6 +154,7 @@ public class PlanController implements PlanApi {
   }
 
   @Override
+  @Transactional
   public ResponseEntity<Object> updateReal(Principal principal,
       Long planId,
       DayOfWeek dayOfWeek,
@@ -147,6 +172,7 @@ public class PlanController implements PlanApi {
   }
 
   @Override
+  @Transactional
   public ResponseEntity<List<Day>> getToday(Principal principal){
     List<Day> today = planService.getToday(principal).stream()
         .map(planFacade::apply)

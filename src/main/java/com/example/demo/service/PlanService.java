@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.DayItem;
+import com.example.demo.entity.FollowerItem;
 import com.example.demo.entity.HistoryItem;
 import com.example.demo.entity.IngredientDayItem;
 import com.example.demo.entity.IngredientItem;
@@ -78,6 +79,7 @@ public class PlanService {
     PlanItem planItem = PlanItem.builder()
         .name(name)
         .user(user)
+        .ready(false)
         .build();
 
     planRepository.save(planItem);
@@ -108,6 +110,61 @@ public class PlanService {
 
     log.info("Saving Recipe for User: {}", user.getEmail());
     return planRepository.findByName(name).get();
+  }
+
+  public PlanItem ready(Long planId, String userName, Integer week, LocalDate date,
+      Principal principal) {
+    UserItem user = userService.getUserByUsername(userName);
+    PlanItem plan = planRepository.findByPlanId(planId).get();
+
+    plan.setReady(true);
+    planRepository.save(plan);
+
+    int count = 0;
+    for (int i = 0; i < week; i++) {
+      for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
+        for (EatingTime eatingTime : EatingTime.values()) {
+          RealDayItem dayItem = RealDayItem.builder()
+              .plan(plan)
+              .day(dayOfWeek)
+              .eatingTime(eatingTime)
+              .date(date.plusDays(count))
+              .build();
+          realDayRepository.save(dayItem);
+        }
+        count++;
+      }
+    }
+
+    int countDay = 0;
+    for (int i = 0; i < week; i++) {
+      for (DayItem day : plan.getDays()) {
+        List<IngredientDayItem> allByDayOrderByDay = ingredientDayRepository.findAllByDayOrderByDay(
+            day);
+        for (IngredientDayItem ingredientDayItem : allByDayOrderByDay) {
+          IngredientRealDayItem item = IngredientRealDayItem.builder()
+              .checkIngredient(null)
+              .count(ingredientDayItem.getCount())
+              .ingredient(ingredientDayItem.getIngredient())
+              .day(realDayRepository.findByPlanAndDayAndEatingTimeAndDate(ingredientDayItem.getDay()
+                      .getPlan(), ingredientDayItem.getDay().getDay(),
+                  ingredientDayItem.getDay().getEatingTime(),
+                  date.plusDays(countDay / 3).plusWeeks(i)).get())
+              .build();
+          ingredientRealDayRepository.save(item);
+        }
+        countDay++;
+      }
+      countDay = 0;
+    }
+    FollowerItem follower = FollowerItem.builder()
+        .plan(plan)
+        .userId(user.getUserId())
+        .build();
+    followerRepository.save(follower);
+
+    log.info("Saving ready for User: {}", user.getEmail());
+    return planRepository.findByPlanId(planId).get();
   }
 
   public PlanItem addIngredient(Principal principal, Long planId, DayOfWeek dayOfWeek,

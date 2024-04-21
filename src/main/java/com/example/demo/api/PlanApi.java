@@ -31,6 +31,14 @@ public interface PlanApi {
       @RequestParam(value = "name") String name,
       Principal principal);
 
+  @PostMapping("/ready")
+  public ResponseEntity<Object> ready(
+      @RequestParam(value = "planId") String planId,
+      @RequestParam(value = "userName") String userName,
+      @RequestParam(value = "week") String week,
+      @RequestParam(value = "date") String date,
+      Principal principal);
+
   @PostMapping("/{planId}/{dayOfWeek}/{eatingTime}/ingredient")
   public ResponseEntity<Object> addIngredient(
       Principal principal,

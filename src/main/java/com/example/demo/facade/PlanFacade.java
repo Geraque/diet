@@ -46,6 +46,7 @@ public class PlanFacade {
         .name(planItem.getName())
         .days(appliedDays)
         .realDays(appliedRealDays)
+        .ready(planItem.getReady())
         .build();
   }
 
@@ -72,9 +73,13 @@ public class PlanFacade {
   }
 
   public RealDay apply(RealDayItem dayItem) {
-    List<IngredientRealDay> appliedIngredients = dayItem.getIngredients().stream()
-        .map(this::apply)
-        .collect(Collectors.toList());
+    List<IngredientRealDay> appliedIngredients = new ArrayList<>();
+
+    if (dayItem.getIngredients() != null) {
+      appliedIngredients = dayItem.getIngredients().stream()
+          .map(this::apply)
+          .collect(Collectors.toList());
+    }
 
     return RealDay.builder()
         .dayId(dayItem.getDayId())
