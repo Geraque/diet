@@ -31,6 +31,21 @@ public class IngredientController implements IngredientApi {
   }
 
   @Override
+  public ResponseEntity<List<Ingredient>> create(String calories,
+      String carbohydrates,
+      String fat,
+      String name,
+      String proteins) {
+    List<Ingredient> ingredients = ingredientService.create(calories, carbohydrates, fat, name,
+            proteins)
+        .stream()
+        .map(ingredientFacade::ingredientItemToIngredient)
+        .collect(Collectors.toList());
+
+    return new ResponseEntity<>(ingredients, HttpStatus.OK);
+  }
+
+  @Override
   public ResponseEntity<Ingredient> getIngredientById(String ingredientId) {
 
     return ingredientService.getIngredientById(Long.valueOf(ingredientId))
