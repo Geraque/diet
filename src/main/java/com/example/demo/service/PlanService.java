@@ -11,6 +11,7 @@ import com.example.demo.entity.RealDayItem;
 import com.example.demo.entity.RealHistoryItem;
 import com.example.demo.entity.UserItem;
 import com.example.demo.entity.enums.EatingTime;
+import com.example.demo.model.Result;
 import com.example.demo.repository.DayRepository;
 import com.example.demo.repository.FollowerRepository;
 import com.example.demo.repository.HistoryRepository;
@@ -375,6 +376,29 @@ public class PlanService {
       }
     }
     return list;
+  }
+
+  @Transactional
+  public Result getResult(Principal principal) {
+    UserItem user = getUserByPrincipal(principal);
+    PlanItem plan = followerRepository.findByUserId(user.getUserId()).getPlan();
+    Result result = new Result();
+    result.setUserId(user.getUserId());
+    result.setPlanId(plan.getPlanId());
+    for (RealDayItem realDay: plan.getRealDays()){
+      for(IngredientRealDayItem ingredientRealDay: realDay.getIngredients()){
+        result.setCalories(result.getCalories() + ingredientRealDay.getCount() * ingredientRealDay.getIngredient().getCalories());
+        result.setFat(result.getFat() + ingredientRealDay.getCount() * ingredientRealDay.getIngredient().getFat());
+        result.setProteins(result.getProteins() + ingredientRealDay.getCount() * ingredientRealDay.getIngredient().getProteins());
+        result.setCarbohydrates(result.getCarbohydrates() + ingredientRealDay.getCount() * ingredientRealDay.getIngredient().getCarbohydrates());
+        if(Boolean.TRUE.equals(ingredientRealDay.getCheckIngredient())){
+          result.setApproved(result.getApproved() + 1);
+        } else {
+          result.setChange(result.getApproved() + 1);
+        }
+      }
+    }
+    return result;
   }
 
   private UserItem getUserByPrincipal(Principal principal) {

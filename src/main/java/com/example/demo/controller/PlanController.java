@@ -6,6 +6,7 @@ import com.example.demo.entity.enums.EatingTime;
 import com.example.demo.facade.PlanFacade;
 import com.example.demo.model.Day;
 import com.example.demo.model.Plan;
+import com.example.demo.model.Result;
 import com.example.demo.service.PlanService;
 import java.security.Principal;
 import java.time.DayOfWeek;
@@ -189,5 +190,12 @@ public class PlanController implements PlanApi {
         .collect(Collectors.toList());;
 
     return new ResponseEntity<>(today, HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<Result> getResult(Principal principal){
+    Result result = planService.getResult(principal);
+
+    return new ResponseEntity<>(result, HttpStatus.OK);
   }
 }

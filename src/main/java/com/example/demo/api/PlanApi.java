@@ -3,6 +3,7 @@ package com.example.demo.api;
 import com.example.demo.entity.enums.EatingTime;
 import com.example.demo.model.Day;
 import com.example.demo.model.Plan;
+import com.example.demo.model.Result;
 import java.security.Principal;
 import java.time.DayOfWeek;
 import java.util.List;
@@ -125,4 +126,7 @@ public interface PlanApi {
 
   @GetMapping("/today")
   public ResponseEntity<List<Day>> getToday(Principal principal);
+
+  @GetMapping("/result")
+  public ResponseEntity<Result> getResult(Principal principal);
 }
