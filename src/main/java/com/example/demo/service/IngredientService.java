@@ -41,4 +41,28 @@ public class IngredientService {
     ingredientRepository.save(item);
     return ingredientRepository.findAllByOrderByName();
   }
+
+  @Transactional
+  public List<IngredientItem> change(String calories,
+      String carbohydrates,
+      String fat,
+      String name,
+      String proteins,
+      String oldName) {
+    IngredientItem ingredient = ingredientRepository.findByName(oldName).get();
+    ingredient.setName(name);
+    ingredient.setCalories(Integer.valueOf(calories));
+    ingredient.setFat(Integer.valueOf(fat));
+    ingredient.setCarbohydrates(Integer.valueOf(carbohydrates));
+    ingredient.setProteins(Integer.valueOf(proteins));
+    ingredientRepository.save(ingredient);
+    return ingredientRepository.findAllByOrderByName();
+  }
+
+  @Transactional
+  public List<IngredientItem> delete(String name) {
+    IngredientItem ingredient = ingredientRepository.findByName(name).get();
+    ingredientRepository.delete(ingredient);
+    return ingredientRepository.findAllByOrderByName();
+  }
 }
