@@ -50,10 +50,9 @@ public class IngredientController implements IngredientApi {
       String carbohydrates,
       String fat,
       String name,
-      String proteins,
-      String oldName) {
+      String proteins/*,String oldName*/) {
     List<Ingredient> ingredients = ingredientService.change(calories, carbohydrates, fat, name,
-            proteins, oldName)
+            proteins/*, oldName*/)
         .stream()
         .map(ingredientFacade::ingredientItemToIngredient)
         .collect(Collectors.toList());

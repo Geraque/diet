@@ -38,11 +38,10 @@ public interface IngredientApi {
       @RequestParam(value = "carbohydrates") String carbohydrates,
       @RequestParam(value = "fat") String fat,
       @RequestParam(value = "name") String name,
-      @RequestParam(value = "proteins") String proteins,
-      @RequestParam(value = "oldName") String oldName
+      @RequestParam(value = "proteins") String proteins/*, @RequestParam(value = "oldName") String oldName*/
   );
 
-  @DeleteMapping("/delete")
+  @DeleteMapping("/{name}/delete")
   public ResponseEntity<List<Ingredient>> delete(
       @PathVariable(value = "name") String name
   );

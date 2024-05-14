@@ -42,14 +42,13 @@ public class IngredientService {
     return ingredientRepository.findAllByOrderByName();
   }
 
-  @Transactional
   public List<IngredientItem> change(String calories,
       String carbohydrates,
       String fat,
       String name,
-      String proteins,
-      String oldName) {
-    IngredientItem ingredient = ingredientRepository.findByName(oldName).get();
+      String proteins/*, String oldName*/) {
+//    IngredientItem ingredient = ingredientRepository.findByName(oldName).get();
+    IngredientItem ingredient = ingredientRepository.findByName(name).get();
     ingredient.setName(name);
     ingredient.setCalories(Integer.valueOf(calories));
     ingredient.setFat(Integer.valueOf(fat));
