@@ -67,11 +67,11 @@ public class PlanController implements PlanApi {
 
   @Override
   public ResponseEntity<Object> ready(String planId,
-      String userName,
+      String userId,
       String week,
       String date,
       Principal principal) {
-    PlanItem planItem = planService.ready(Long.valueOf(planId), userName, Integer.valueOf(week),
+    PlanItem planItem = planService.ready(Long.valueOf(planId), userId, Integer.valueOf(week),
         LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.yyyy")), principal);
     Plan createdPlan = planFacade.apply(planItem);
 

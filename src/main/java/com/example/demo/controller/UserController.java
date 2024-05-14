@@ -7,6 +7,8 @@ import com.example.demo.model.User;
 import com.example.demo.service.UserService;
 import com.example.demo.validations.ResponseErrorValidation;
 import java.security.Principal;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -88,6 +90,16 @@ public class UserController implements UserApi {
   public ResponseEntity<Boolean> isDiet(Principal principal) {
     Boolean bool = userService.isDiet(principal);
     return new ResponseEntity<>(bool, HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<List<User>> getClients() {
+    List<User> ingredients = userService.getClients()
+        .stream()
+        .map(userFacade::userModelToUserDTO)
+        .collect(Collectors.toList());
+
+    return new ResponseEntity<>(ingredients, HttpStatus.OK);
   }
 
 }

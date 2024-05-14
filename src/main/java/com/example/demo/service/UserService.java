@@ -7,6 +7,8 @@ import com.example.demo.model.User;
 import com.example.demo.payload.request.SignupRequest;
 import com.example.demo.repository.UserRepository;
 import java.security.Principal;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -109,5 +111,19 @@ public class UserService {
       role = String.valueOf(e);
     }
     return role.equals("ROLE_DIET");
+  }
+
+  public boolean isUser(UserItem user) {
+    String role = "";
+    for (ERole e : user.getRoles()) {
+      role = String.valueOf(e);
+    }
+    return role.equals("ROLE_USER");
+  }
+
+  public List<UserItem> getClients() {
+    return userRepository.findAll()
+        .stream().filter(user -> isUser(user))
+        .collect(Collectors.toList());
   }
 }
