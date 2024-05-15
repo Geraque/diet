@@ -60,6 +60,10 @@ public class PlanService {
     return planRepository.findAllByUserOrderByName(user);
   }
 
+  public PlanItem getPlanById(Long planId){
+    return planRepository.findByPlanId(planId).get();
+  }
+
   @Transactional
   public List<PlanItem> getPlansForUser(Principal principal) {
     UserItem user = getUserByPrincipal(principal);
