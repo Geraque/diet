@@ -40,7 +40,7 @@ public interface PlanApi {
       Principal principal);
 
   @PostMapping("/ready")
-  public ResponseEntity<Object> ready(
+  public ResponseEntity<Object> publish(
       @RequestParam(value = "planId") String planId,
       @RequestParam(value = "userName") String userName,
       @RequestParam(value = "week") String week,

@@ -145,9 +145,9 @@ public class PlanService {
   }
 
   @Transactional
-  public PlanItem ready(Long planId, String userId, Integer week, LocalDate date,
+  public PlanItem publish(Long planId, String username, Integer week, LocalDate date,
       Principal principal) {
-    UserItem user = userService.getUserById(Long.valueOf(userId));
+    UserItem user = userService.getUserByUsername(username);
     PlanItem plan = planRepository.findByPlanId(planId).get();
 
     plan.setReady(true);
