@@ -1,7 +1,6 @@
 package com.example.demo.entity;
 
 import com.example.demo.entity.enums.EatingTime;
-import com.example.demo.model.IngredientDay;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,4 +44,10 @@ public class DayItem {
 
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "day", orphanRemoval = true)
   private List<IngredientDayItem> ingredients = new ArrayList<>();
+
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "day", orphanRemoval = true)
+  private List<HistoryItem> history = new ArrayList<>();
+
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "day", orphanRemoval = true)
+  private List<RealHistoryItem> realHistory = new ArrayList<>();
 }

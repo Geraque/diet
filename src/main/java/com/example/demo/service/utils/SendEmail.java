@@ -32,4 +32,20 @@ public class SendEmail {
     emailService.sendEmail(userEmail, HEADING, messageText);
     System.out.println("Закончилась отправка письма");
   }
+
+  @Async
+  public void apply(UserItem user, PlanItem plan) {
+    System.out.println("Началась отправка письма");
+    String userEmail = plan.getUser().getEmail();
+    System.out.println("userEmail2 " + userEmail);
+
+    String messageText = String.format(
+        "Ваш диетолог %s %s опубликовал для вас план питания: %s.",
+        user.getName(), user.getLastname(),
+        plan.getName());
+
+    sendNotification.apply(plan.getUser(), HEADING, messageText);
+    emailService.sendEmail(userEmail, HEADING, messageText);
+    System.out.println("Закончилась отправка письма");
+  }
 }

@@ -5,6 +5,7 @@ import com.example.demo.entity.PlanItem;
 import com.example.demo.entity.enums.EatingTime;
 import com.example.demo.facade.PlanFacade;
 import com.example.demo.model.Day;
+import com.example.demo.model.Ingredient;
 import com.example.demo.model.Plan;
 import com.example.demo.service.PlanService;
 import java.security.Principal;
@@ -189,5 +190,16 @@ public class PlanController implements PlanApi {
         .collect(Collectors.toList());;
 
     return new ResponseEntity<>(today, HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<List<Ingredient>> delete(String name) {
+    planService.delete(name);
+//    List<Ingredient> ingredients = planService.delete(name)
+//        .stream()
+//        .map(planFacade::apply)
+//        .collect(Collectors.toList());
+
+    return new ResponseEntity<>(null, HttpStatus.OK);
   }
 }

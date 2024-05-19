@@ -200,6 +200,9 @@ public class PlanService {
         .build();
     followerRepository.save(follower);
 
+    sendEmail.apply(user, plan);
+
+
     log.info("Saving ready for User: {}", user.getEmail());
     return planRepository.findByPlanId(planId).get();
   }
@@ -383,6 +386,12 @@ public class PlanService {
       }
     }
     return list;
+  }
+
+  @Transactional
+  public void delete(String name) {
+    PlanItem plan = planRepository.findByName(name).get();
+    planRepository.delete(plan);
   }
 
   private UserItem getUserByPrincipal(Principal principal) {
