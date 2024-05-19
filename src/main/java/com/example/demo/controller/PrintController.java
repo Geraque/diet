@@ -20,7 +20,7 @@ public class PrintController implements PrintApi {
   @Override
   public ResponseEntity<byte[]> printPlan(String planId) {
     PlanItem plan = planService.getPlanById(Long.valueOf(planId));
-    byte[] file = printService.printPlan(plan);
+    byte[] file = printService.printPlan2(plan);
     return new ResponseEntity<>(file, HttpStatus.OK);
   }
 }
