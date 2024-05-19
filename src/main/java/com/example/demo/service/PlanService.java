@@ -71,7 +71,11 @@ public class PlanService {
       return planRepository.findAllByUserOrderByName(user);
     } else {
       List<PlanItem> list = new ArrayList<>();
-      PlanItem plan = followerRepository.findByUserId(user.getUserId()).getPlan();
+      FollowerItem follower = followerRepository.findByUserId(user.getUserId());
+      if (follower == null) {
+        return List.of();
+      }
+      PlanItem plan = follower.getPlan();
       list.add(plan);
       return list;
     }
