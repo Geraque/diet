@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,6 +33,8 @@ public class PlanItem {
   private String name;
   @ManyToOne(fetch = FetchType.LAZY)
   private UserItem user;
+  @OneToOne(cascade = CascadeType.ALL, mappedBy = "plan", orphanRemoval = true)
+  private FollowerItem follower;
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "plan", orphanRemoval = true)
   private List<DayItem> days = new ArrayList<>();
 

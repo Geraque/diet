@@ -36,7 +36,7 @@ public class SendEmail {
   @Async
   public void apply(UserItem user, PlanItem plan) {
     System.out.println("Началась отправка письма");
-    String userEmail = plan.getUser().getEmail();
+    String userEmail = user.getEmail();
     System.out.println("userEmail2 " + userEmail);
 
     String messageText = String.format(
@@ -44,7 +44,7 @@ public class SendEmail {
         user.getName(), user.getLastname(),
         plan.getName());
 
-    sendNotification.apply(plan.getUser(), HEADING, messageText);
+    sendNotification.apply(user, HEADING, messageText);
     emailService.sendEmail(userEmail, HEADING, messageText);
     System.out.println("Закончилась отправка письма");
   }
