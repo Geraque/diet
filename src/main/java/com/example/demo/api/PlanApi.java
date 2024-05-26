@@ -127,8 +127,8 @@ public interface PlanApi {
   @GetMapping("/today")
   public ResponseEntity<List<Day>> getToday(Principal principal);
 
-  @DeleteMapping("/{name}/delete")
+  @DeleteMapping("/{planId}/delete")
   public ResponseEntity<List<Ingredient>> delete(
-      @PathVariable(value = "name") String name
+      @PathVariable(value = "planId") String planId
   );
 }

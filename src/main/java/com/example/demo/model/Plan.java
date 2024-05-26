@@ -12,6 +12,5 @@ public class Plan {
   private String name;
   private List<Day> days;
   private List<RealDay> realDays;
-
   private Boolean ready;
 }

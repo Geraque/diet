@@ -193,8 +193,8 @@ public class PlanController implements PlanApi {
   }
 
   @Override
-  public ResponseEntity<List<Ingredient>> delete(String name) {
-    planService.delete(name);
+  public ResponseEntity<List<Ingredient>> delete(String planId) {
+    planService.delete(planId);
 //    List<Ingredient> ingredients = planService.delete(name)
 //        .stream()
 //        .map(planFacade::apply)

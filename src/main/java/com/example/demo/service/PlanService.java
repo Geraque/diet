@@ -389,8 +389,8 @@ public class PlanService {
   }
 
   @Transactional
-  public void delete(String name) {
-    PlanItem plan = planRepository.findByName(name).get();
+  public void delete(String planId) {
+    PlanItem plan = planRepository.findByPlanId(Long.valueOf(planId)).get();
     planRepository.delete(plan);
   }
 
