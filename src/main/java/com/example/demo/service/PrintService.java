@@ -29,7 +29,7 @@ public class PrintService {
 
   public byte[] printPlan(PlanItem plan) {
     try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-      Sheet sheet = workbook.createSheet("Plan");
+      Sheet sheet = workbook.createSheet("План");
 
       // Создаем заголовок
       Row titleRow = sheet.createRow(0);
@@ -38,88 +38,16 @@ public class PrintService {
       CellStyle style = workbook.createCellStyle();
       style.setAlignment(HorizontalAlignment.CENTER);
       titleCell.setCellStyle(style);
-      sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 3)); // Объединяем ячейки для заголовка
+      sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, EatingTime.values().length));
 
-      // Создаем заголовки столбцов
+      // Создаем заголовки столбцов с русскими названиями
       Row headerRow = sheet.createRow(1);
       CellStyle headerStyle = workbook.createCellStyle();
       headerStyle.setAlignment(HorizontalAlignment.CENTER);
-      String[] daysOfWeek = {"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY",
-          "SUNDAY"};
-      for (int i = 0; i < daysOfWeek.length; i++) {
-        Cell cell = headerRow.createCell(i+1);
-        cell.setCellValue(daysOfWeek[i]);
-        cell.setCellStyle(headerStyle);
-      }
-
-      // Подготавливаем данные
-      Map<EatingTime, Map<DayOfWeek, List<String>>> dataMap = new EnumMap<>(EatingTime.class);
-      for (EatingTime time : EatingTime.values()) {
-        dataMap.put(time, new EnumMap<>(DayOfWeek.class));
-      }
-
-      for (DayItem dayItem : plan.getDays()) {
-        DayOfWeek day = dayItem.getDay();
-        EatingTime time = dayItem.getEatingTime();
-        List<String> ingredients = dayItem.getIngredients().stream()
-            .map(ingredientDayItem -> ingredientDayItem.getIngredient().getName() + " x " + ingredientDayItem.getCount())
-            .collect(Collectors.toList());
-        dataMap.get(time).put(day, ingredients);
-      }
-
-      // Заполняем таблицу
-      int rowNum = 2;
-      for (EatingTime time : EatingTime.values()) {
-        Row row = sheet.createRow(rowNum++);;
-        Cell timeCell = row.createCell(0);
-        timeCell.setCellValue(time.name());
-        Map<DayOfWeek, List<String>> dayMap = dataMap.get(time);
-
-        for (int i = 0; i < daysOfWeek.length; i++) {
-          DayOfWeek day = DayOfWeek.valueOf(daysOfWeek[i]);
-          Cell dayCell = row.createCell(i+1);
-          if (dayMap.containsKey(day)) {
-            String ingredientText = String.join(", ", dayMap.get(day));
-            dayCell.setCellValue(ingredientText);
-          }
-        }
-      }
-
-      // Авто-ресайз колонок
-      for (int i = 0; i < daysOfWeek.length + 1; i++) {
-        sheet.autoSizeColumn(i);
-      }
-
-      workbook.write(outputStream);
-      return outputStream.toByteArray();
-    } catch (Exception e) {
-      e.printStackTrace();
-      return new byte[]{};
-    }
-  }
-
-  public byte[] printPlan2(PlanItem plan) {
-    try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-      Sheet sheet = workbook.createSheet("Plan");
-
-      // Создаем заголовок
-      Row titleRow = sheet.createRow(0);
-      Cell titleCell = titleRow.createCell(0);
-      titleCell.setCellValue(plan.getName());
-      CellStyle style = workbook.createCellStyle();
-      style.setAlignment(HorizontalAlignment.CENTER);
-      titleCell.setCellStyle(style);
-      sheet.addMergedRegion(new CellRangeAddress(0, 0, 0,
-          EatingTime.values().length)); // Объединяем ячейки для заголовка
-
-      // Создаем заголовки столбцов
-      Row headerRow = sheet.createRow(1);
-      CellStyle headerStyle = workbook.createCellStyle();
-      headerStyle.setAlignment(HorizontalAlignment.CENTER);
-      EatingTime[] eatingTimes = EatingTime.values();
-      for (int i = 0; i < eatingTimes.length; i++) {
+      String[] eatingTimesRussian = {"ЗАВТРАК", "ОБЕД", "УЖИН"};
+      for (int i = 0; i < eatingTimesRussian.length; i++) {
         Cell cell = headerRow.createCell(i + 1);
-        cell.setCellValue(eatingTimes[i].name());
+        cell.setCellValue(eatingTimesRussian[i]);
         cell.setCellStyle(headerStyle);
       }
 
@@ -137,20 +65,23 @@ public class PrintService {
         dayMap.get(day).put(time, ingredients);
       }
 
+      // Русские названия дней недели
+      String[] daysOfWeekRussian = {"ПОНЕДЕЛЬНИК", "ВТОРНИК", "СРЕДА", "ЧЕТВЕРГ", "ПЯТНИЦА",
+          "СУББОТА", "ВОСКРЕСЕНЬЕ"};
+
       // Заполняем таблицу
       int rowNumber = 2;
-      String[] daysOfWeek = {"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY",
-          "SUNDAY"};
-      for (String dayOfWeek : daysOfWeek) {
-        DayOfWeek day = DayOfWeek.valueOf(dayOfWeek);
+      DayOfWeek[] daysOfWeek = DayOfWeek.values();
+      for (int j = 0; j < daysOfWeek.length; j++) {
+        DayOfWeek day = daysOfWeek[j];
         Row row = sheet.createRow(rowNumber++);
         Cell dayCell = row.createCell(0);
-        dayCell.setCellValue(day.toString());
+        dayCell.setCellValue(daysOfWeekRussian[j]);
 
         Map<EatingTime, List<String>> times = dayMap.getOrDefault(day,
             new EnumMap<>(EatingTime.class));
-        for (int i = 0; i < eatingTimes.length; i++) {
-          EatingTime time = eatingTimes[i];
+        for (int i = 0; i < EatingTime.values().length; i++) {
+          EatingTime time = EatingTime.values()[i];
           Cell timeCell = row.createCell(i + 1);
           if (times.containsKey(time)) {
             String ingredientsText = String.join(", ", times.get(time));
@@ -160,7 +91,7 @@ public class PrintService {
       }
 
       // Авто-ресайз колонок
-      for (int i = 0; i <= eatingTimes.length; i++) {
+      for (int i = 0; i < eatingTimesRussian.length + 1; i++) {
         sheet.autoSizeColumn(i);
       }
 
