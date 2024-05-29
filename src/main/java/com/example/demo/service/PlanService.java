@@ -71,12 +71,14 @@ public class PlanService {
       return planRepository.findAllByUserOrderByName(user);
     } else {
       List<PlanItem> list = new ArrayList<>();
-      FollowerItem follower = followerRepository.findByUserId(user.getUserId());
-      if (follower == null) {
+      List<FollowerItem> followers = followerRepository.findByUserId(user.getUserId());
+      if (followers == null) {
         return List.of();
       }
-      PlanItem plan = follower.getPlan();
-      list.add(plan);
+      for (FollowerItem follower : followers) {
+        PlanItem plan = follower.getPlan();
+        list.add(plan);
+      }
       return list;
     }
   }
@@ -375,7 +377,7 @@ public class PlanService {
   @Transactional
   public List<DayItem> getToday(Principal principal) {
     UserItem user = getUserByPrincipal(principal);
-    PlanItem plan = followerRepository.findByUserId(user.getUserId()).getPlan();
+    PlanItem plan = followerRepository.findByUserId(user.getUserId()).get(0).getPlan();
 
     Calendar calendar = Calendar.getInstance();
     int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FollowerRepository extends JpaRepository<FollowerItem, Long> {
 
-  FollowerItem findByUserId(Long userId);
+  List<FollowerItem> findByUserId(Long userId);
 
   FollowerItem findByPlan(PlanItem planItem);
 }
