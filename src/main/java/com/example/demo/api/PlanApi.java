@@ -1,9 +1,9 @@
 package com.example.demo.api;
 
 import com.example.demo.entity.enums.EatingTime;
-import com.example.demo.model.Day;
 import com.example.demo.model.Ingredient;
 import com.example.demo.model.Plan;
+import com.example.demo.model.PlanWithDays;
 import java.security.Principal;
 import java.time.DayOfWeek;
 import java.util.List;
@@ -125,7 +125,7 @@ public interface PlanApi {
   );
 
   @GetMapping("/today")
-  public ResponseEntity<List<Day>> getToday(Principal principal);
+  public ResponseEntity<List<PlanWithDays>> getToday(Principal principal);
 
   @DeleteMapping("/{planId}/delete")
   public ResponseEntity<List<Ingredient>> delete(

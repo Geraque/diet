@@ -10,6 +10,5 @@ public class PlanWithDays {
 
   private Long planId;
   private String name;
-  private Long userId;
   private List<Day> days;
 }

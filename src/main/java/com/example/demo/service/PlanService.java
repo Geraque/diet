@@ -11,6 +11,9 @@ import com.example.demo.entity.RealDayItem;
 import com.example.demo.entity.RealHistoryItem;
 import com.example.demo.entity.UserItem;
 import com.example.demo.entity.enums.EatingTime;
+import com.example.demo.facade.PlanFacade;
+import com.example.demo.model.Day;
+import com.example.demo.model.PlanWithDays;
 import com.example.demo.repository.DayRepository;
 import com.example.demo.repository.FollowerRepository;
 import com.example.demo.repository.HistoryRepository;
@@ -29,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +57,7 @@ public class PlanService {
   private final FollowerRepository followerRepository;
   private final HistoryRepository historyRepository;
   private final RealHistoryRepository realHistoryRepository;
+  private final PlanFacade planFacade;
 
   @Transactional
   public List<PlanItem> getPlansForUser(Long userId) {
@@ -60,7 +65,7 @@ public class PlanService {
     return planRepository.findAllByUserOrderByName(user);
   }
 
-  public PlanItem getPlanById(Long planId){
+  public PlanItem getPlanById(Long planId) {
     return planRepository.findByPlanId(planId).get();
   }
 
@@ -203,7 +208,6 @@ public class PlanService {
     followerRepository.save(follower);
 
     sendEmail.apply(user, plan);
-
 
     log.info("Saving ready for User: {}", user.getEmail());
     return planRepository.findByPlanId(planId).get();
@@ -375,19 +379,31 @@ public class PlanService {
   }
 
   @Transactional
-  public List<DayItem> getToday(Principal principal) {
+  public List<PlanWithDays> getToday(Principal principal) {
     UserItem user = getUserByPrincipal(principal);
-    PlanItem plan = followerRepository.findByUserId(user.getUserId()).get(0).getPlan();
 
-    Calendar calendar = Calendar.getInstance();
-    int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-    List<DayItem> list = new ArrayList<>();
-    for (DayItem dayItem : plan.getDays()) {
-      if (getDayOfWeek(dayOfWeek).equals(dayItem.getDay())) {
-        list.add(dayItem);
+    List<FollowerItem> followers = followerRepository.findByUserId(user.getUserId());
+    List<PlanWithDays> plans = new ArrayList<>();
+    for (FollowerItem follower : followers) {
+      PlanItem plan = follower.getPlan();
+      Calendar calendar = Calendar.getInstance();
+      int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+      List<DayItem> list = new ArrayList<>();
+      for (DayItem dayItem : plan.getDays()) {
+        if (getDayOfWeek(dayOfWeek).equals(dayItem.getDay())) {
+          list.add(dayItem);
+        }
       }
+      List<Day> days = list.stream()
+          .map(planFacade::apply)
+          .collect(Collectors.toList());
+      plans.add(PlanWithDays.builder()
+          .planId(plan.getPlanId())
+          .name(plan.getName())
+          .days(days)
+          .build());
     }
-    return list;
+    return plans;
   }
 
   @Transactional
