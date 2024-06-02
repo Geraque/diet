@@ -12,8 +12,8 @@ import com.example.demo.entity.RealHistoryItem;
 import com.example.demo.entity.UserItem;
 import com.example.demo.entity.enums.EatingTime;
 import com.example.demo.facade.PlanFacade;
-import com.example.demo.model.Day;
 import com.example.demo.model.PlanWithDays;
+import com.example.demo.model.RealDay;
 import com.example.demo.repository.DayRepository;
 import com.example.demo.repository.FollowerRepository;
 import com.example.demo.repository.HistoryRepository;
@@ -29,7 +29,6 @@ import java.security.Principal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -386,15 +385,14 @@ public class PlanService {
     List<PlanWithDays> plans = new ArrayList<>();
     for (FollowerItem follower : followers) {
       PlanItem plan = follower.getPlan();
-      Calendar calendar = Calendar.getInstance();
-      int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-      List<DayItem> list = new ArrayList<>();
-      for (DayItem dayItem : plan.getDays()) {
-        if (getDayOfWeek(dayOfWeek).equals(dayItem.getDay())) {
+      List<RealDayItem> list = new ArrayList<>();
+      for (RealDayItem dayItem : plan.getRealDays()) {
+        LocalDate now = LocalDate.now();
+        if (now.equals(dayItem.getDate())) {
           list.add(dayItem);
         }
       }
-      List<Day> days = list.stream()
+      List<RealDay> days = list.stream()
           .map(planFacade::apply)
           .collect(Collectors.toList());
       plans.add(PlanWithDays.builder()
@@ -417,34 +415,6 @@ public class PlanService {
     return userRepository.findUserItemByUsername(username)
         .orElseThrow(
             () -> new UsernameNotFoundException("Username not found with username " + username));
-  }
-
-  private DayOfWeek getDayOfWeek(int day) {
-    DayOfWeek dayOfWeekText = DayOfWeek.SUNDAY;
-    switch (day) {
-      case Calendar.SUNDAY:
-        dayOfWeekText = DayOfWeek.SUNDAY;
-        break;
-      case Calendar.MONDAY:
-        dayOfWeekText = DayOfWeek.MONDAY;
-        break;
-      case Calendar.TUESDAY:
-        dayOfWeekText = DayOfWeek.TUESDAY;
-        break;
-      case Calendar.WEDNESDAY:
-        dayOfWeekText = DayOfWeek.WEDNESDAY;
-        break;
-      case Calendar.THURSDAY:
-        dayOfWeekText = DayOfWeek.THURSDAY;
-        break;
-      case Calendar.FRIDAY:
-        dayOfWeekText = DayOfWeek.FRIDAY;
-        break;
-      case Calendar.SATURDAY:
-        dayOfWeekText = DayOfWeek.SATURDAY;
-        break;
-    }
-    return dayOfWeekText;
   }
 
 }
