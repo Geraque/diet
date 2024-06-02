@@ -113,20 +113,6 @@ public class PlanService {
       }
     }
 
-//    for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
-//      for (EatingTime eatingTime : EatingTime.values()) {
-//        RealDayItem dayItem = RealDayItem.builder()
-//            .plan(planItem)
-//            .day(dayOfWeek)
-//            .eatingTime(eatingTime)
-//            .build();
-//        dayItem.setPlan(planItem);
-//        dayItem.setDay(dayOfWeek);
-//        dayItem.setEatingTime(eatingTime);
-//        dayRepository.save(dayItem);
-//      }
-//    }
-
     log.info("Saving Recipe for User: {}", user.getEmail());
     return planRepository.findByName(name).get();
   }
@@ -217,8 +203,8 @@ public class PlanService {
       EatingTime eatingTime,
       String ingredient, Integer count) {
     PlanItem plan = planRepository.findByPlanId(planId).get();
-
-    IngredientItem ingredientItem = ingredientRepository.findByName(ingredient).get();
+    UserItem user = getUserByPrincipal(principal);
+    IngredientItem ingredientItem = ingredientRepository.findByNameAndUser(ingredient, user).get();
     DayItem day = dayRepository.findByPlanAndDayAndEatingTime(plan, dayOfWeek, eatingTime).get();
     Optional<IngredientDayItem> ingredientDay = ingredientDayRepository.findByDayAndIngredient(
         day, ingredientItem);
@@ -230,7 +216,7 @@ public class PlanService {
       IngredientDayItem ingredientDayItem = IngredientDayItem.builder()
           .day(dayRepository.findByPlanAndDayAndEatingTime(plan, dayOfWeek, eatingTime)
               .get())
-          .ingredient(ingredientRepository.findByName(ingredient).get())
+          .ingredient(ingredientRepository.findByNameAndUser(ingredient, user).get())
           .count(count)
           .build();
       ingredientDayRepository.save(ingredientDayItem);
@@ -243,13 +229,11 @@ public class PlanService {
       EatingTime eatingTime,
       String ingredient) {
     PlanItem plan = planRepository.findByPlanId(planId).get();
-
-    IngredientItem ingredientItem = ingredientRepository.findByName(ingredient).get();
+    UserItem user = getUserByPrincipal(principal);
+    IngredientItem ingredientItem = ingredientRepository.findByNameAndUser(ingredient, user).get();
     DayItem day = dayRepository.findByPlanAndDayAndEatingTime(plan, dayOfWeek, eatingTime).get();
     IngredientDayItem ingredientDay = ingredientDayRepository.findByDayAndIngredient(
         day, ingredientItem).get();
-    System.out.println("zzzzzz: " + ingredientDay.getId());
-    System.out.println("xxxxxxxxxxxxxx: " + day.getDayId());
     ingredientDayRepository.delete(ingredientDay);
 
     return planRepository.findByPlanId(planId).get();
@@ -260,12 +244,12 @@ public class PlanService {
       EatingTime eatingTime,
       String ingredient, Integer count, LocalDate date) {
     PlanItem plan = planRepository.findByPlanId(planId).get();
-
+    UserItem user = getUserByPrincipal(principal);
     IngredientRealDayItem ingredientDayItem = IngredientRealDayItem.builder()
         .day(realDayRepository.findByPlanAndDayAndEatingTimeAndDate(plan, dayOfWeek, eatingTime,
                 date)
             .get())
-        .ingredient(ingredientRepository.findByName(ingredient).get())
+        .ingredient(ingredientRepository.findByNameAndUser(ingredient, user).get())
         .count(count)
         .build();
     ingredientRealDayRepository.save(ingredientDayItem);
@@ -277,7 +261,8 @@ public class PlanService {
       EatingTime eatingTime,
       String ingredient, Integer count) {
     PlanItem plan = planRepository.findByPlanId(planId).get();
-    IngredientItem ingredientItem = ingredientRepository.findByName(ingredient).get();
+    UserItem user = plan.getUser();
+    IngredientItem ingredientItem = ingredientRepository.findByNameAndUser(ingredient, user).get();
     DayItem day = dayRepository.findByPlanAndDayAndEatingTime(plan, dayOfWeek, eatingTime).get();
     IngredientDayItem ingredientDayItem = ingredientDayRepository.findByDayAndIngredient(day,
         ingredientItem).get();
@@ -291,7 +276,8 @@ public class PlanService {
       EatingTime eatingTime,
       String ingredient, Integer count, LocalDate date) {
     PlanItem plan = planRepository.findByPlanId(planId).get();
-    IngredientItem ingredientItem = ingredientRepository.findByName(ingredient).get();
+    UserItem user = plan.getUser();
+    IngredientItem ingredientItem = ingredientRepository.findByNameAndUser(ingredient, user).get();
     RealDayItem day = realDayRepository.findByPlanAndDayAndEatingTimeAndDate(plan, dayOfWeek,
         eatingTime, date).get();
     IngredientRealDayItem ingredientDayItem = ingredientRealDayRepository.findByDayAndIngredient(
@@ -307,9 +293,12 @@ public class PlanService {
       EatingTime eatingTime,
       String ingredientOld, String ingredientNew, Integer count, String comment) {
     PlanItem plan = planRepository.findByPlanId(planId).get();
-    IngredientItem ingredientItem = ingredientRepository.findByName(ingredientOld).get();
+    UserItem user = plan.getUser();
+    IngredientItem ingredientItem = ingredientRepository.findByNameAndUser(ingredientOld, user)
+        .get();
     DayItem day = dayRepository.findByPlanAndDayAndEatingTime(plan, dayOfWeek, eatingTime).get();
-    IngredientItem ingredientItemNew = ingredientRepository.findByName(ingredientNew).get();
+    IngredientItem ingredientItemNew = ingredientRepository.findByNameAndUser(ingredientNew, user)
+        .get();
 
     IngredientDayItem ingredientDayItem = ingredientDayRepository.findByDayAndIngredient(day,
         ingredientItem).get();
@@ -333,7 +322,6 @@ public class PlanService {
         .build();
     historyRepository.save(historyItem);
 
-    UserItem user = userService.getUserByUsername(principal.getName());
     sendEmail.apply(user, plan, ingredientOld, ingredientNew, comment);
     return planRepository.findByPlanId(Long.valueOf(planId)).get();
   }
@@ -343,10 +331,13 @@ public class PlanService {
       EatingTime eatingTime,
       String ingredientOld, String ingredientNew, Integer count, String comment, LocalDate date) {
     PlanItem plan = planRepository.findByPlanId(planId).get();
-    IngredientItem ingredientItem = ingredientRepository.findByName(ingredientOld).get();
+    UserItem user = plan.getUser();
+    IngredientItem ingredientItem = ingredientRepository.findByNameAndUser(ingredientOld, user)
+        .get();
     RealDayItem day = realDayRepository.findByPlanAndDayAndEatingTimeAndDate(plan, dayOfWeek,
         eatingTime, date).get();
-    IngredientItem ingredientItemNew = ingredientRepository.findByName(ingredientNew).get();
+    IngredientItem ingredientItemNew = ingredientRepository.findByNameAndUser(ingredientNew, user)
+        .get();
 
     IngredientRealDayItem ingredientDayItem = ingredientRealDayRepository.findByDayAndIngredient(
         day,
@@ -372,7 +363,6 @@ public class PlanService {
         .build();
     realHistoryRepository.save(historyItem);
 
-    UserItem user = userService.getUserByUsername(principal.getName());
     sendEmail.apply(user, plan, ingredientOld, ingredientNew, comment);
     return planRepository.findByPlanId(Long.valueOf(planId)).get();
   }

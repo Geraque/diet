@@ -1,6 +1,7 @@
 package com.example.demo.api;
 
 import com.example.demo.entity.enums.EatingTime;
+import java.security.Principal;
 import java.time.DayOfWeek;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface HistoryApi {
 
   @PostMapping("/{planId}/{dayOfWeek}/{eatingTime}/last")
-  public ResponseEntity<Object> last(
+  public ResponseEntity<Object> last(Principal principal,
       @PathVariable("planId") Long planId,
       @PathVariable("dayOfWeek") DayOfWeek dayOfWeek,
       @PathVariable("eatingTime") EatingTime eatingTime,
@@ -22,7 +23,7 @@ public interface HistoryApi {
   );
 
   @PostMapping("/{planId}/{dayOfWeek}/{eatingTime}/last/real")
-  public ResponseEntity<Object> lastReal(
+  public ResponseEntity<Object> lastReal(Principal principal,
       @PathVariable("planId") Long planId,
       @PathVariable("dayOfWeek") DayOfWeek dayOfWeek,
       @PathVariable("eatingTime") EatingTime eatingTime,

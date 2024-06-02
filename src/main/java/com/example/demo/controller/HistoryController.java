@@ -7,6 +7,7 @@ import com.example.demo.entity.enums.EatingTime;
 import com.example.demo.facade.PlanFacade;
 import com.example.demo.model.History;
 import com.example.demo.service.HistoryService;
+import java.security.Principal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
@@ -24,18 +25,19 @@ public class HistoryController implements HistoryApi {
   private final PlanFacade planFacade;
 
   @Override
-  public ResponseEntity<Object> last(Long planId, DayOfWeek dayOfWeek,
+  public ResponseEntity<Object> last(Principal principal, Long planId, DayOfWeek dayOfWeek,
       EatingTime eatingTime, String ingredientNew) {
-    HistoryItem historyItem = historyService.last(planId, dayOfWeek, eatingTime, ingredientNew);
+    HistoryItem historyItem = historyService.last(principal, planId, dayOfWeek, eatingTime,
+        ingredientNew);
     History createdHistory = planFacade.apply(historyItem);
 
     return new ResponseEntity<>(createdHistory, HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<Object> lastReal(Long planId, DayOfWeek dayOfWeek,
+  public ResponseEntity<Object> lastReal(Principal principal, Long planId, DayOfWeek dayOfWeek,
       EatingTime eatingTime, String ingredientNew, String date) {
-    RealHistoryItem historyItem = historyService.lastReal(planId, dayOfWeek, eatingTime,
+    RealHistoryItem historyItem = historyService.lastReal(principal, planId, dayOfWeek, eatingTime,
         ingredientNew,
         LocalDate.parse(date));
     History createdHistory = planFacade.apply(historyItem);

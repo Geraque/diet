@@ -9,8 +9,8 @@ import com.example.demo.repository.UserRepository;
 import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,16 +18,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class UserService {
 
   private final UserRepository userRepository;
+  private final IngredientService ingredientService;
   private final BCryptPasswordEncoder passwordEncoder;
 
-  @Autowired
-  public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
-    this.userRepository = userRepository;
-    this.passwordEncoder = passwordEncoder;
-  }
 
   public UserItem create(SignupRequest userIn, ERole eRole) {
     UserItem user = new UserItem();
@@ -40,7 +37,9 @@ public class UserService {
 
     try {
       log.info("Saving User {}", userIn.getEmail());
-      return userRepository.save(user);
+      UserItem save = userRepository.save(user);
+      ingredientService.presetIngredients(user);
+      return save;
     } catch (Exception e) {
       log.error("Error during registration. {}", e.getMessage());
       throw new UserExistException(

@@ -1,6 +1,7 @@
 package com.example.demo.api;
 
 import com.example.demo.model.Ingredient;
+import java.security.Principal;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface IngredientApi {
 
   @GetMapping("/")
-  public ResponseEntity<List<Ingredient>> getAllIngredients();
+  public ResponseEntity<List<Ingredient>> getAllIngredients(
+      Principal principal
+  );
 
   @GetMapping("/{ingredientId}")
   public ResponseEntity<Ingredient> getIngredientById(
@@ -25,6 +28,7 @@ public interface IngredientApi {
 
   @PostMapping("/create")
   public ResponseEntity<List<Ingredient>> create(
+      Principal principal,
       @RequestParam("calories") String calories,
       @RequestParam(value = "carbohydrates") String carbohydrates,
       @RequestParam(value = "fat") String fat,
@@ -34,6 +38,7 @@ public interface IngredientApi {
 
   @PostMapping("/change")
   public ResponseEntity<List<Ingredient>> change(
+      Principal principal,
       @RequestParam("calories") String calories,
       @RequestParam(value = "carbohydrates") String carbohydrates,
       @RequestParam(value = "fat") String fat,
@@ -43,6 +48,7 @@ public interface IngredientApi {
 
   @DeleteMapping("/{name}/delete")
   public ResponseEntity<List<Ingredient>> delete(
+      Principal principal,
       @PathVariable(value = "name") String name
   );
 

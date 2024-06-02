@@ -9,9 +9,9 @@ public class Ingredient {
 
   private Long ingredientId;
   private String name;
-  private Integer proteins;
-  private Integer fat;
-  private Integer carbohydrates;
-  private Integer calories;
+  private Double proteins;
+  private Double fat;
+  private Double carbohydrates;
+  private Double calories;
 
 }

@@ -64,6 +64,9 @@ public class UserItem implements UserDetails {
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
   private List<PlanItem> plans = new ArrayList<>();
 
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
+  private List<IngredientItem> ingredients = new ArrayList<>();
+
   @Transient
   private Collection<? extends GrantedAuthority> authorities;
 

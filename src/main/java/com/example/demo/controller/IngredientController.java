@@ -4,6 +4,7 @@ import com.example.demo.api.IngredientApi;
 import com.example.demo.facade.IngredientFacade;
 import com.example.demo.model.Ingredient;
 import com.example.demo.service.IngredientService;
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -21,8 +22,8 @@ public class IngredientController implements IngredientApi {
   private final IngredientFacade ingredientFacade;
 
   @Override
-  public ResponseEntity<List<Ingredient>> getAllIngredients() {
-    List<Ingredient> ingredients = ingredientService.getAllIngredients()
+  public ResponseEntity<List<Ingredient>> getAllIngredients(Principal principal) {
+    List<Ingredient> ingredients = ingredientService.getAllIngredients(principal)
         .stream()
         .map(ingredientFacade::ingredientItemToIngredient)
         .collect(Collectors.toList());
@@ -31,12 +32,13 @@ public class IngredientController implements IngredientApi {
   }
 
   @Override
-  public ResponseEntity<List<Ingredient>> create(String calories,
+  public ResponseEntity<List<Ingredient>> create(Principal principal, String calories,
       String carbohydrates,
       String fat,
       String name,
       String proteins) {
-    List<Ingredient> ingredients = ingredientService.create(calories, carbohydrates, fat, name,
+    List<Ingredient> ingredients = ingredientService.create(principal, calories, carbohydrates, fat,
+            name,
             proteins)
         .stream()
         .map(ingredientFacade::ingredientItemToIngredient)
@@ -46,12 +48,13 @@ public class IngredientController implements IngredientApi {
   }
 
   @Override
-  public ResponseEntity<List<Ingredient>> change(String calories,
+  public ResponseEntity<List<Ingredient>> change(Principal principal, String calories,
       String carbohydrates,
       String fat,
       String name,
       String proteins/*,String oldName*/) {
-    List<Ingredient> ingredients = ingredientService.change(calories, carbohydrates, fat, name,
+    List<Ingredient> ingredients = ingredientService.change(principal, calories, carbohydrates, fat,
+            name,
             proteins/*, oldName*/)
         .stream()
         .map(ingredientFacade::ingredientItemToIngredient)
@@ -61,8 +64,8 @@ public class IngredientController implements IngredientApi {
   }
 
   @Override
-  public ResponseEntity<List<Ingredient>> delete(String name) {
-    List<Ingredient> ingredients = ingredientService.delete(name)
+  public ResponseEntity<List<Ingredient>> delete(Principal principal, String name) {
+    List<Ingredient> ingredients = ingredientService.delete(principal, name)
         .stream()
         .map(ingredientFacade::ingredientItemToIngredient)
         .collect(Collectors.toList());
