@@ -373,23 +373,44 @@ public class PlanService {
 
     List<FollowerItem> followers = followerRepository.findByUserId(user.getUserId());
     List<PlanWithDays> plans = new ArrayList<>();
-    for (FollowerItem follower : followers) {
-      PlanItem plan = follower.getPlan();
-      List<RealDayItem> list = new ArrayList<>();
-      for (RealDayItem dayItem : plan.getRealDays()) {
-        LocalDate now = LocalDate.now();
-        if (now.equals(dayItem.getDate())) {
-          list.add(dayItem);
+    if (followers.isEmpty()) {
+      List<PlanItem> userPlans = planRepository.findAllByUserOrderByName(user);
+      for (PlanItem plan : userPlans) {
+        List<RealDayItem> list = new ArrayList<>();
+        for (RealDayItem dayItem : plan.getRealDays()) {
+          LocalDate now = LocalDate.now();
+          if (now.equals(dayItem.getDate())) {
+            list.add(dayItem);
+          }
         }
+        List<RealDay> days = list.stream()
+            .map(planFacade::apply)
+            .collect(Collectors.toList());
+        plans.add(PlanWithDays.builder()
+            .planId(plan.getPlanId())
+            .name(plan.getName())
+            .days(days)
+            .build());
       }
-      List<RealDay> days = list.stream()
-          .map(planFacade::apply)
-          .collect(Collectors.toList());
-      plans.add(PlanWithDays.builder()
-          .planId(plan.getPlanId())
-          .name(plan.getName())
-          .days(days)
-          .build());
+    } else {
+      for (FollowerItem follower : followers) {
+        PlanItem plan = follower.getPlan();
+        List<RealDayItem> list = new ArrayList<>();
+        for (RealDayItem dayItem : plan.getRealDays()) {
+          LocalDate now = LocalDate.now();
+          if (now.equals(dayItem.getDate())) {
+            list.add(dayItem);
+          }
+        }
+        List<RealDay> days = list.stream()
+            .map(planFacade::apply)
+            .collect(Collectors.toList());
+        plans.add(PlanWithDays.builder()
+            .planId(plan.getPlanId())
+            .name(plan.getName())
+            .days(days)
+            .build());
+      }
     }
     return plans;
   }
