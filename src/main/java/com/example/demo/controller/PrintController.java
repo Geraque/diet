@@ -4,6 +4,8 @@ import com.example.demo.api.PrintApi;
 import com.example.demo.entity.PlanItem;
 import com.example.demo.service.PlanService;
 import com.example.demo.service.PrintService;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,15 @@ public class PrintController implements PrintApi {
   public ResponseEntity<byte[]> printPlan(String planId) {
     PlanItem plan = planService.getPlanById(Long.valueOf(planId));
     byte[] file = printService.printPlan(plan);
+    return new ResponseEntity<>(file, HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<byte[]> printPlanReal(String planId, String startWeek, String endWeek) {
+    PlanItem plan = planService.getPlanById(Long.valueOf(planId));
+    byte[] file = printService.printPlanRealDays(plan,
+        LocalDate.parse(startWeek, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+        LocalDate.parse(endWeek, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     return new ResponseEntity<>(file, HttpStatus.OK);
   }
 }

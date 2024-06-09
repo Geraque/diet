@@ -15,4 +15,11 @@ public interface PrintApi {
   public ResponseEntity<byte[]> printPlan(
       @PathVariable("planId") String planId
   );
+
+  @GetMapping("/{planId}/{startWeek}/{endWeek}")
+  public ResponseEntity<byte[]> printPlanReal(
+      @PathVariable("planId") String planId,
+      @PathVariable("startWeek") String startWeek,
+      @PathVariable("endWeek") String endWeek
+  );
 }
