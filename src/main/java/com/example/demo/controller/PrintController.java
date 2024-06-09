@@ -27,11 +27,18 @@ public class PrintController implements PrintApi {
   }
 
   @Override
-  public ResponseEntity<byte[]> printPlanReal(String planId, String startWeek, String endWeek) {
+  public ResponseEntity<byte[]> printWeek(String planId, String startWeek, String endWeek) {
     PlanItem plan = planService.getPlanById(Long.valueOf(planId));
-    byte[] file = printService.printPlanRealDays(plan,
+    byte[] file = printService.printWeek(plan,
         LocalDate.parse(startWeek, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
         LocalDate.parse(endWeek, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+    return new ResponseEntity<>(file, HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<byte[]> printPlanReal(String planId) {
+    PlanItem plan = planService.getPlanById(Long.valueOf(planId));
+    byte[] file = printService.printPlanReal(plan);
     return new ResponseEntity<>(file, HttpStatus.OK);
   }
 }
